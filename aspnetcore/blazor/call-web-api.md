@@ -5,7 +5,7 @@ description: Learn how to call a web API in Blazor apps.
 monikerRange: '>= aspnetcore-3.1'
 ms.author: riande
 ms.custom: mvc
-ms.date: 06/03/2021
+ms.date: 11/09/2021
 no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: blazor/call-web-api
 zone_pivot_groups: blazor-hosting-models
@@ -15,6 +15,14 @@ zone_pivot_groups: blazor-hosting-models
 ::: moniker range=">= aspnetcore-6.0"
 
 ::: zone pivot="webassembly"
+
+> [!NOTE]
+> This article has loaded **Blazor WebAssembly** coverage for calling web APIs. The [Blazor Server coverage](?pivots=server) addresses the following subjects:
+>
+> * Use of the `HttpClient` factory infrastructure to provide an `HttpClient` to the app.
+> * Cross-origin resource sharing (CORS) pertaining to Blazor Server apps.
+> * Blazor framework component examples for testing web API access.
+> * Additional resources for developing Blazor Server apps that call a web API.
 
 [Blazor WebAssembly](xref:blazor/hosting-models#blazor-webassembly) apps call web APIs using a preconfigured <xref:System.Net.Http.HttpClient> service, which is focused on making requests back to the server of origin. Additional <xref:System.Net.Http.HttpClient> service configurations for other web APIs can be created in developer code. Requests are composed using Blazor JSON helpers or with <xref:System.Net.Http.HttpRequestMessage>. Requests can include [Fetch API](https://developer.mozilla.org/docs/Web/API/Fetch_API) option configuration.
 
@@ -32,7 +40,7 @@ Use the following `TodoItem` class with this article's examples if you build the
 public class TodoItem
 {
     public long Id { get; set; }
-    public string Name { get; set; }
+    public string? Name { get; set; }
     public bool IsComplete { get; set; }
 }
 ```
@@ -101,7 +109,7 @@ else
 }
 
 @code {
-    private TodoItem[] todoItems;
+    private TodoItem[]? todoItems;
 
     protected override async Task OnInitializedAsync() => 
         todoItems = await Http.GetFromJsonAsync<TodoItem[]>("api/TodoItems");
@@ -124,7 +132,7 @@ In the following component code, `newItemName` is provided by a bound element of
 <button @onclick="AddItem">Add</button>
 
 @code {
-    private string newItemName;
+    private string? newItemName;
 
     private async Task AddItem()
     {
@@ -144,7 +152,7 @@ var content = await response.Content.ReadFromJsonAsync<WeatherForecast>();
 
 <xref:System.Net.Http.Json.HttpClientJsonExtensions.PutAsJsonAsync%2A> sends an HTTP PUT request with JSON-encoded content.
 
-In the following component code, `editItem` values for `Name` and `IsCompleted` are provided by bound elements of the component. The item's `Id` is set when the item is selected in another part of the UI (not shown) and `EditItem` is called. The `SaveItem` method is triggered by selecting the `<button>` element.
+In the following component code, `editItem` values for `Name` and `IsCompleted` are provided by bound elements of the component. The item's `Id` is set when the item is selected in another part of the UI (not shown) and `EditItem` is called. The `SaveItem` method is triggered by selecting the `<button>` element. Note that the following example doesn't show loading `todoItems` for brevity (see the [GET from JSON (`GetFromJsonAsync`)](#get-from-json-getfromjsonasync) section for an example of loading items).
 
 ```razor
 @using System.Net.Http
@@ -157,7 +165,7 @@ In the following component code, `editItem` values for `Name` and `IsCompleted` 
 <button @onclick="SaveItem">Save</button>
 
 @code {
-    private string id;
+    private string? id;
     private TodoItem editItem = new TodoItem();
 
     private void EditItem(long id)
@@ -202,13 +210,9 @@ In the following component code, the `<button>` element calls the `DeleteItem` m
 
 <xref:System.Net.Http.IHttpClientFactory> services and the configuration of a named <xref:System.Net.Http.HttpClient> are supported.
 
-Reference the [`Microsoft.Extensions.Http`](https://www.nuget.org/packages/Microsoft.Extensions.Http) NuGet package in the project file:
+Add the [`Microsoft.Extensions.Http`](https://www.nuget.org/packages/Microsoft.Extensions.Http) NuGet package to the app.
 
-```xml
-<PackageReference Include="Microsoft.Extensions.Http" Version="{VERSION}" />
-```
-
-In the preceding example, the `{VERSION}` placeholder is the version of the package.
+[!INCLUDE[](~/includes/package-reference.md)]
 
 In `Program.cs`:
 
@@ -254,7 +258,7 @@ else
 }
 
 @code {
-    private WeatherForecast[] forecasts;
+    private WeatherForecast[]? forecasts;
 
     protected override async Task OnInitializedAsync()
     {
@@ -347,7 +351,7 @@ else
 }
 
 @code {
-    private WeatherForecast[] forecasts;
+    private WeatherForecast[]? forecasts;
 
     protected override async Task OnInitializedAsync()
     {
@@ -364,7 +368,7 @@ else
 
 [!code-razor[](~/blazor/samples/6.0/BlazorSample_WebAssembly/Pages/call-web-api/TodoRequest.razor)]
 
-Blazor WebAssembly's implementation of <xref:System.Net.Http.HttpClient> uses [Fetch API](https://developer.mozilla.org/docs/Web/API/WindowOrWorkerGlobalScope/fetch). Fetch API allows the configuration of several [request-specific options](https://developer.mozilla.org/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Parameters). Options can be configured with <xref:System.Net.Http.HttpRequestMessage> extension methods shown in the following table.
+Blazor WebAssembly's implementation of <xref:System.Net.Http.HttpClient> uses [Fetch API](https://developer.mozilla.org/docs/Web/API/fetch). Fetch API allows the configuration of several [request-specific options](https://developer.mozilla.org/docs/Web/API/fetch#Parameters). Options can be configured with <xref:System.Net.Http.HttpRequestMessage> extension methods shown in the following table.
 
 | Extension method | Fetch API request property |
 | --- | --- |
@@ -383,7 +387,7 @@ To include credentials in a cross-origin request, use the <xref:Microsoft.AspNet
 requestMessage.SetBrowserRequestCredentials(BrowserRequestCredentials.Include);
 ```
 
-For more information on Fetch API options, see [MDN web docs: WindowOrWorkerGlobalScope.fetch(): Parameters](https://developer.mozilla.org/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Parameters).
+For more information on Fetch API options, see [MDN web docs: WindowOrWorkerGlobalScope.fetch(): Parameters](https://developer.mozilla.org/docs/Web/API/fetch#Parameters).
 
 ## Call web API example
 
@@ -452,8 +456,8 @@ else
 </p>
 
 @code {
-    private WeatherForecast[] forecasts;
-    private string exceptionMessage;
+    private WeatherForecast[]? forecasts;
+    private string? exceptionMessage;
 
     protected override async Task OnInitializedAsync()
     {
@@ -479,6 +483,21 @@ For more information, see <xref:blazor/fundamentals/handle-errors>.
 ::: zone-end
 
 ::: zone pivot="server"
+
+> [!NOTE]
+> This article has loaded **Blazor Server** coverage for calling web APIs. The [Blazor WebAssembly coverage](?pivots=webassembly) addresses the following subjects:
+>
+> * Blazor WebAssembly examples based on an client-side WebAssembly app that calls a web API to create, read, update, and delete todo list items.
+> * `System.Net.Http.Json` package.
+> * `HttpClient` service configuration.
+> * `HttpClient` and JSON helpers (`GetFromJsonAsync`, `PostAsJsonAsync`, `PutAsJsonAsync`, `DeleteAsync`).
+> * `IHttpClientFactory` services and the configuration of a named `HttpClient`.
+> * Typed `HttpClient`.
+> * `HttpClient` and `HttpRequestMessage` to customize requests.
+> * Call web API example with cross-origin resource sharing (CORS) and how CORS pertains to Blazor WebAssembly apps.
+> * How to handle web API response errors in developer code.
+> * Blazor framework component examples for testing web API access.
+> * Additional resources for developing Blazor WebAssembly apps that call a web API.
 
 [Blazor Server](xref:blazor/hosting-models#blazor-server) apps call web APIs using <xref:System.Net.Http.HttpClient> instances, typically created using <xref:System.Net.Http.IHttpClientFactory>. For guidance that applies to Blazor Server, see <xref:fundamentals/http-requests>.
 
@@ -591,7 +610,7 @@ Various network tools are publicly available for testing web API backend apps di
 * <xref:blazor/security/webassembly/additional-scenarios>: Includes coverage on using <xref:System.Net.Http.HttpClient> to make secure web API requests.
 * <xref:security/cors>: Although the content applies to ASP.NET Core apps, not Blazor WebAssembly apps, the article covers general CORS concepts.
 * [Cross Origin Resource Sharing (CORS) at W3C](https://www.w3.org/TR/cors/)
-* [Fetch API](https://developer.mozilla.org/docs/Web/API/WindowOrWorkerGlobalScope/fetch)
+* [Fetch API](https://developer.mozilla.org/docs/Web/API/fetch)
 
 ::: zone-end
 
@@ -611,6 +630,14 @@ Various network tools are publicly available for testing web API backend apps di
 ::: moniker range=">= aspnetcore-5.0 < aspnetcore-6.0"
 
 ::: zone pivot="webassembly"
+
+> [!NOTE]
+> This article has loaded **Blazor WebAssembly** coverage for calling web APIs. The [Blazor Server coverage](?pivots=server) addresses the following subjects:
+>
+> * Use of the `HttpClient` factory infrastructure to provide an `HttpClient` to the app.
+> * Cross-origin resource sharing (CORS) pertaining to Blazor Server apps.
+> * Blazor framework component examples for testing web API access.
+> * Additional resources for developing Blazor Server apps that call a web API.
 
 [Blazor WebAssembly](xref:blazor/hosting-models#blazor-webassembly) apps call web APIs using a preconfigured <xref:System.Net.Http.HttpClient> service, which is focused on making requests back to the server of origin. Additional <xref:System.Net.Http.HttpClient> service configurations for other web APIs can be created in developer code. Requests are composed using Blazor JSON helpers or with <xref:System.Net.Http.HttpRequestMessage>. Requests can include [Fetch API](https://developer.mozilla.org/docs/Web/API/Fetch_API) option configuration.
 
@@ -798,13 +825,9 @@ In the following component code, the `<button>` element calls the `DeleteItem` m
 
 <xref:System.Net.Http.IHttpClientFactory> services and the configuration of a named <xref:System.Net.Http.HttpClient> are supported.
 
-Reference the [`Microsoft.Extensions.Http`](https://www.nuget.org/packages/Microsoft.Extensions.Http) NuGet package in the project file:
+Add the [`Microsoft.Extensions.Http`](https://www.nuget.org/packages/Microsoft.Extensions.Http) NuGet package to the app.
 
-```xml
-<PackageReference Include="Microsoft.Extensions.Http" Version="{VERSION}" />
-```
-
-In the preceding example, the `{VERSION}` placeholder is the version of the package.
+[!INCLUDE[](~/includes/package-reference.md)]
 
 In `Program.cs`:
 
@@ -960,7 +983,7 @@ else
 
 [!code-razor[](~/blazor/samples/5.0/BlazorSample_WebAssembly/Pages/call-web-api/TodoRequest.razor)]
 
-Blazor WebAssembly's implementation of <xref:System.Net.Http.HttpClient> uses [Fetch API](https://developer.mozilla.org/docs/Web/API/WindowOrWorkerGlobalScope/fetch). Fetch API allows the configuration of several [request-specific options](https://developer.mozilla.org/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Parameters). Options can be configured with <xref:System.Net.Http.HttpRequestMessage> extension methods shown in the following table.
+Blazor WebAssembly's implementation of <xref:System.Net.Http.HttpClient> uses [Fetch API](https://developer.mozilla.org/docs/Web/API/fetch). Fetch API allows the configuration of several [request-specific options](https://developer.mozilla.org/docs/Web/API/fetch#Parameters). Options can be configured with <xref:System.Net.Http.HttpRequestMessage> extension methods shown in the following table.
 
 | Extension method | Fetch API request property |
 | --- | --- |
@@ -979,7 +1002,7 @@ To include credentials in a cross-origin request, use the <xref:Microsoft.AspNet
 requestMessage.SetBrowserRequestCredentials(BrowserRequestCredentials.Include);
 ```
 
-For more information on Fetch API options, see [MDN web docs: WindowOrWorkerGlobalScope.fetch(): Parameters](https://developer.mozilla.org/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Parameters).
+For more information on Fetch API options, see [MDN web docs: WindowOrWorkerGlobalScope.fetch(): Parameters](https://developer.mozilla.org/docs/Web/API/fetch#Parameters).
 
 ## Call web API example
 
@@ -1075,6 +1098,21 @@ For more information, see <xref:blazor/fundamentals/handle-errors>.
 ::: zone-end
 
 ::: zone pivot="server"
+
+> [!NOTE]
+> This article has loaded **Blazor Server** coverage for calling web APIs. The [Blazor WebAssembly coverage](?pivots=webassembly) addresses the following subjects:
+>
+> * Blazor WebAssembly examples based on an client-side WebAssembly app that calls a web API to create, read, update, and delete todo list items.
+> * `System.Net.Http.Json` package.
+> * `HttpClient` service configuration.
+> * `HttpClient` and JSON helpers (`GetFromJsonAsync`, `PostAsJsonAsync`, `PutAsJsonAsync`, `DeleteAsync`).
+> * `IHttpClientFactory` services and the configuration of a named `HttpClient`.
+> * Typed `HttpClient`.
+> * `HttpClient` and `HttpRequestMessage` to customize requests.
+> * Call web API example with cross-origin resource sharing (CORS) and how CORS pertains to Blazor WebAssembly apps.
+> * How to handle web API response errors in developer code.
+> * Blazor framework component examples for testing web API access.
+> * Additional resources for developing Blazor WebAssembly apps that call a web API.
 
 [Blazor Server](xref:blazor/hosting-models#blazor-server) apps call web APIs using <xref:System.Net.Http.HttpClient> instances, typically created using <xref:System.Net.Http.IHttpClientFactory>. For guidance that applies to Blazor Server, see <xref:fundamentals/http-requests>.
 
@@ -1189,7 +1227,7 @@ Various network tools are publicly available for testing web API backend apps di
 * <xref:blazor/security/webassembly/additional-scenarios>: Includes coverage on using <xref:System.Net.Http.HttpClient> to make secure web API requests.
 * <xref:security/cors>: Although the content applies to ASP.NET Core apps, not Blazor WebAssembly apps, the article covers general CORS concepts.
 * [Cross Origin Resource Sharing (CORS) at W3C](https://www.w3.org/TR/cors/)
-* [Fetch API](https://developer.mozilla.org/docs/Web/API/WindowOrWorkerGlobalScope/fetch)
+* [Fetch API](https://developer.mozilla.org/docs/Web/API/fetch)
 
 ::: zone-end
 
@@ -1209,6 +1247,14 @@ Various network tools are publicly available for testing web API backend apps di
 ::: moniker range="< aspnetcore-5.0"
 
 ::: zone pivot="webassembly"
+
+> [!NOTE]
+> This article has loaded **Blazor WebAssembly** coverage for calling web APIs. The [Blazor Server coverage](?pivots=server) addresses the following subjects:
+>
+> * Use of the `HttpClient` factory infrastructure to provide an `HttpClient` to the app.
+> * Cross-origin resource sharing (CORS) pertaining to Blazor Server apps.
+> * Blazor framework component examples for testing web API access.
+> * Additional resources for developing Blazor Server apps that call a web API.
 
 [Blazor WebAssembly](xref:blazor/hosting-models#blazor-webassembly) apps call web APIs using a preconfigured <xref:System.Net.Http.HttpClient> service, which is focused on making requests back to the server of origin. Additional <xref:System.Net.Http.HttpClient> service configurations for other web APIs can be created in developer code. Requests are composed using Blazor JSON helpers or with <xref:System.Net.Http.HttpRequestMessage>. Requests can include [Fetch API](https://developer.mozilla.org/docs/Web/API/Fetch_API) option configuration.
 
@@ -1396,13 +1442,9 @@ In the following component code, the `<button>` element calls the `DeleteItem` m
 
 <xref:System.Net.Http.IHttpClientFactory> services and the configuration of a named <xref:System.Net.Http.HttpClient> are supported.
 
-Reference the [`Microsoft.Extensions.Http`](https://www.nuget.org/packages/Microsoft.Extensions.Http) NuGet package in the project file:
+Add the [`Microsoft.Extensions.Http`](https://www.nuget.org/packages/Microsoft.Extensions.Http) NuGet package to the app.
 
-```xml
-<PackageReference Include="Microsoft.Extensions.Http" Version="{VERSION}" />
-```
-
-In the preceding example, the `{VERSION}` placeholder is the version of the package.
+[!INCLUDE[](~/includes/package-reference.md)]
 
 In `Program.cs`:
 
@@ -1558,7 +1600,7 @@ else
 
 [!code-razor[](~/blazor/samples/3.1/BlazorSample_WebAssembly/Pages/call-web-api/TodoRequest.razor)]
 
-Blazor WebAssembly's implementation of <xref:System.Net.Http.HttpClient> uses [Fetch API](https://developer.mozilla.org/docs/Web/API/WindowOrWorkerGlobalScope/fetch). Fetch API allows the configuration of several [request-specific options](https://developer.mozilla.org/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Parameters). Options can be configured with <xref:System.Net.Http.HttpRequestMessage> extension methods shown in the following table.
+Blazor WebAssembly's implementation of <xref:System.Net.Http.HttpClient> uses [Fetch API](https://developer.mozilla.org/docs/Web/API/fetch). Fetch API allows the configuration of several [request-specific options](https://developer.mozilla.org/docs/Web/API/fetch#Parameters). Options can be configured with <xref:System.Net.Http.HttpRequestMessage> extension methods shown in the following table.
 
 | Extension method | Fetch API request property |
 | --- | --- |
@@ -1577,7 +1619,7 @@ To include credentials in a cross-origin request, use the <xref:Microsoft.AspNet
 requestMessage.SetBrowserRequestCredentials(BrowserRequestCredentials.Include);
 ```
 
-For more information on Fetch API options, see [MDN web docs: WindowOrWorkerGlobalScope.fetch(): Parameters](https://developer.mozilla.org/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Parameters).
+For more information on Fetch API options, see [MDN web docs: WindowOrWorkerGlobalScope.fetch(): Parameters](https://developer.mozilla.org/docs/Web/API/fetch#Parameters).
 
 ## Call web API example
 
@@ -1673,6 +1715,21 @@ For more information, see <xref:blazor/fundamentals/handle-errors>.
 ::: zone-end
 
 ::: zone pivot="server"
+
+> [!NOTE]
+> This article has loaded **Blazor Server** coverage for calling web APIs. The [Blazor WebAssembly coverage](?pivots=webassembly) addresses the following subjects:
+>
+> * Blazor WebAssembly examples based on an client-side WebAssembly app that calls a web API to create, read, update, and delete todo list items.
+> * `System.Net.Http.Json` package.
+> * `HttpClient` service configuration.
+> * `HttpClient` and JSON helpers (`GetFromJsonAsync`, `PostAsJsonAsync`, `PutAsJsonAsync`, `DeleteAsync`).
+> * `IHttpClientFactory` services and the configuration of a named `HttpClient`.
+> * Typed `HttpClient`.
+> * `HttpClient` and `HttpRequestMessage` to customize requests.
+> * Call web API example with cross-origin resource sharing (CORS) and how CORS pertains to Blazor WebAssembly apps.
+> * How to handle web API response errors in developer code.
+> * Blazor framework component examples for testing web API access.
+> * Additional resources for developing Blazor WebAssembly apps that call a web API.
 
 [Blazor Server](xref:blazor/hosting-models#blazor-server) apps call web APIs using <xref:System.Net.Http.HttpClient> instances, typically created using <xref:System.Net.Http.IHttpClientFactory>. For guidance that applies to Blazor Server, see <xref:fundamentals/http-requests>.
 
@@ -1787,7 +1844,7 @@ Various network tools are publicly available for testing web API backend apps di
 * <xref:blazor/security/webassembly/additional-scenarios>: Includes coverage on using <xref:System.Net.Http.HttpClient> to make secure web API requests.
 * <xref:security/cors>: Although the content applies to ASP.NET Core apps, not Blazor WebAssembly apps, the article covers general CORS concepts.
 * [Cross Origin Resource Sharing (CORS) at W3C](https://www.w3.org/TR/cors/)
-* [Fetch API](https://developer.mozilla.org/docs/Web/API/WindowOrWorkerGlobalScope/fetch)
+* [Fetch API](https://developer.mozilla.org/docs/Web/API/fetch)
 
 ::: zone-end
 

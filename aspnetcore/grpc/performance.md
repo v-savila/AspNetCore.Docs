@@ -264,3 +264,22 @@ The preceding code:
 * Attempts to get an array from `ByteString.Memory` with <xref:System.Runtime.InteropServices.MemoryMarshal.TryGetArray%2A?displayProperty=nameWithType>.
 * Uses the `ArraySegment<byte>` if it was successfully retrieved. The segment has a reference to the array, offset and count.
 * Otherwise, falls back to allocating a new array with `ByteString.ToByteArray()`.
+
+### gRPC services and large binary payloads
+
+gRPC and Protobuf can send and receive large binary payloads. Although binary Protobuf is more efficient than text-based JSON at serializing binary payloads, there are still important performance characteristics to keep in mind when working with large binary payloads.
+
+gRPC is a message-based RPC framework, which means:
+
+* The entire message is loaded into memory before gRPC can send it.
+* When the message is received, the entire message is deserialized into memory.
+
+Binary payloads are allocated as a byte array. For example, a 10 MB binary payload allocates a 10 MB byte array. Messages with large binary payloads can allocate byte arrays on the [large object heap](/dotnet/standard/garbage-collection/large-object-heap). Large allocations impact server performance and scalability.
+
+Advice for creating high-performance applications with large binary payloads:
+
+* **Avoid** large binary payloads in gRPC messages. A byte array larger than 85,000 bytes is considered a large object. Keeping below that size avoids allocating on the large object heap.
+* **Consider** splitting large binary payloads [using gRPC streaming](xref:grpc/client#client-streaming-call). Binary data is chunked and streamed over multiple messages. For more information on how to stream files, see an [example of gRPC streaming file upload](https://github.com/grpc/grpc-dotnet/tree/master/examples#uploader) at the grpc-dotnet repository.
+* **Consider** not using gRPC for large binary data. In ASP.NET Core, Web APIs can be used alongside gRPC services. An HTTP endpoint can access the request and response stream body directly:
+  * [Read the request body using minimal web API](xref:fundamentals/minimal-apis#read-the-request-body)
+  * [Return stream response using minimal web API](xref:fundamentals/minimal-apis#stream)

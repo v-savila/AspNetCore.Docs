@@ -5,7 +5,7 @@ description: Learn how to secure Blazor Server apps as ASP.NET Core applications
 monikerRange: '>= aspnetcore-3.1'
 ms.author: riande
 ms.custom: mvc
-ms.date: 10/06/2020
+ms.date: 11/09/2021
 no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: blazor/security/server/index
 ---
@@ -105,10 +105,7 @@ For more information:
 
 ## Scaffold Identity
 
-Scaffold Identity into a Blazor Server project:
-
-* [Without existing authorization](xref:security/authentication/scaffold-identity#scaffold-identity-into-a-blazor-server-project-without-existing-authorization).
-* [With authorization](xref:security/authentication/scaffold-identity#scaffold-identity-into-a-blazor-server-project-with-authorization).
+For more information on scaffolding Identity into a Blazor Server project, see <xref:security/authentication/scaffold-identity#scaffold-identity-into-a-blazor-server-project>.
 
 ## Additional claims and tokens from external providers
 

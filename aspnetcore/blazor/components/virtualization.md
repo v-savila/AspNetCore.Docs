@@ -5,7 +5,7 @@ description: Learn how to use component virtualization in ASP.NET Core Blazor ap
 monikerRange: '>= aspnetcore-5.0'
 ms.author: riande
 ms.custom: mvc
-ms.date: 02/26/2021
+ms.date: 11/09/2021
 no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: blazor/components/virtualization
 ---
@@ -38,7 +38,7 @@ Without virtualization, a typical list might use a C# [`foreach`](/dotnet/csharp
 </div>
 ```
 
-If the collection contains thousands of flights, rendering the flights takes a long time and users experience a noticeable UI lag. Most of the flights aren't rendered because they fall outside of the height of the `<div>` element.
+If the collection contains thousands of flights, rendering the flights takes a long time and users experience a noticeable UI lag. Most of the flights aren't seen because they fall outside of the height of the `<div>` element.
 
 Instead of rendering the entire list of flights at once, replace the [`foreach`](/dotnet/csharp/language-reference/keywords/foreach-in) loop in the preceding example with the `Virtualize` component:
 
@@ -106,7 +106,25 @@ private async ValueTask<ItemsProviderResult<Employee>> LoadEmployees(
 }
 ```
 
-<xref:Microsoft.AspNetCore.Components.Web.Virtualization.Virtualize%601.RefreshDataAsync%2A?displayProperty=nameWithType> instructs the component to rerequest data from its <xref:Microsoft.AspNetCore.Components.Web.Virtualization.Virtualize%601.ItemsProvider%2A>. This is useful when external data changes. There's no need to call <xref:Microsoft.AspNetCore.Components.Web.Virtualization.Virtualize%601.RefreshDataAsync%2A> when using <xref:Microsoft.AspNetCore.Components.Web.Virtualization.Virtualize%601.Items%2A>.
+<xref:Microsoft.AspNetCore.Components.Web.Virtualization.Virtualize%601.RefreshDataAsync%2A?displayProperty=nameWithType> instructs the component to rerequest data from its <xref:Microsoft.AspNetCore.Components.Web.Virtualization.Virtualize%601.ItemsProvider%2A>. This is useful when external data changes. There's usually no need to call <xref:Microsoft.AspNetCore.Components.Web.Virtualization.Virtualize%601.RefreshDataAsync%2A> when using <xref:Microsoft.AspNetCore.Components.Web.Virtualization.Virtualize%601.Items%2A>. 
+
+<xref:Microsoft.AspNetCore.Components.Web.Virtualization.Virtualize%601.RefreshDataAsync%2A> updates a `Virtualize` component's data without causing a rerender. If <xref:Microsoft.AspNetCore.Components.Web.Virtualization.Virtualize%601.RefreshDataAsync%2A> is invoked from a Blazor event handler or component lifecycle method, triggering a render isn't required because a render is automatically triggered at the end of the event handler or lifecycle method. If <xref:Microsoft.AspNetCore.Components.Web.Virtualization.Virtualize%601.RefreshDataAsync%2A> is triggered separately from a background task or event, such as in the following `ForcecastUpdated` delegate, call <xref:Microsoft.AspNetCore.Components.ComponentBase.StateHasChanged%2A> to update the UI at the end of the background task or event:
+
+```csharp
+private Virtualize<FetchData>? virtualizeComponent;
+
+protected override void OnInitialized()
+{
+    WeatherForecastSource.ForcecastUpdated += async () => 
+    {
+        await InvokeAsync(() =>
+        {
+            await virtualizeComponent?.RefreshDataAsync();
+            StateHasChanged();
+        });
+    });
+}
+```
 
 ## Placeholder
 
@@ -157,6 +175,72 @@ By default, the `Virtualize` component measures the rendering size (height) of i
 
 When making changes to items rendered by the `Virtualize` component, call <xref:Microsoft.AspNetCore.Components.ComponentBase.StateHasChanged%2A> to force re-evaluation and rerendering of the component. For more information, see <xref:blazor/components/rendering>.
 
+## Keyboard scroll support
+
+To allow users to scroll virtualized content using their keyboard, ensure that the virtualized elements or scroll container itself is focusable. If you fail to take this step, keyboard scrolling doesn't work in Chromium-based browsers.
+
+For example, you can use a `tabindex` attribute on the scroll container:
+
+```razor
+<div style="height:500px; overflow-y:scroll" tabindex="-1">
+    <Virtualize Items="@allFlights">
+        <div class="flight-info">...</div>
+    </Virtualize>
+</div>
+```
+
+To learn more about the meaning of `tabindex` value `-1`, `0`, or other values, see [`tabindex` (MDN documentation)](https://developer.mozilla.org/docs/Web/HTML/Global_attributes/tabindex).
+
+## Advanced styles and scroll detection
+
+The `Virtualize` component is only designed to support specific element layout mechanisms. To understand which element layouts work correctly, the following explains how `Virtualize` detects which elements should be visible for display in the correct place.
+
+If your source code looks like the following:
+
+```razor
+<div style="height:500px; overflow-y:scroll" tabindex="-1">
+    <Virtualize Items="@allFlights" ItemSize="100">
+        <div class="flight-info">Flight @context.Id</div>
+    </Virtualize>
+</div>
+```
+
+At runtime, the `Virtualize` component renders a DOM structure similar to the following:
+
+```html
+<div style="height:500px; overflow-y:scroll" tabindex="-1">
+    <div style="height:1100px"><!-- Placeholder --></div>
+    <div class="flight-info">Flight 12</div>
+    <div class="flight-info">Flight 13</div>
+    <div class="flight-info">Flight 14</div>
+    <div class="flight-info">Flight 15</div>
+    <div class="flight-info">Flight 16</div>
+    <div style="height:3400px"><!-- Placeholder --></div>
+</div>
+```
+
+The actual number of rows rendered and the size of the placeholders vary according to your styling and `Items` collection size. However, notice that there are placeholder `div` elements injected before and after your content. These serve two purposes:
+
+* To provide an offset before and after your content, causing currently-visible items to appear at the correct location in the scroll range and the scroll range itself to represent the total size of all content.
+* To detect when the user is scrolling beyond the current visible range, meaning that different content must be rendered.
+
+The placeholder elements internally use an [Intersection Observer](https://developer.mozilla.org/docs/Web/API/Intersection_Observer_API) to receive notification when they're becoming visible. `Virtualize` depends on receiving these events. `Virtualize` works under the following conditions:
+
+* **All content items are of identical height.** This makes it possible to calculate which content corresponds to a given scroll position without first fetching every data item and rendering the data into a DOM element.
+
+* **Both the placeholders and the content rows are rendered in a single vertical stack with every item filling the whole horizontal width.** This is generally the default. In typical cases with `div` elements, `Virtualize` works by default. If you're using CSS to create a more advanced layout, bear in mind the following requirements:
+
+  * Scroll container styling requires a `display` with any of the following values:
+    * `block` (the default for a `div`).
+    * `table-row-group` (the default for a `tbody`).
+    * `flex` with `flex-direction` set to `column`.
+  * Content row styling requires a `display` with either of the following values:
+    * `block` (the default for a `div`).
+    * `table-row` (the default for a `tr`).
+  * Don't use CSS to interfere with the layout for the placeholder elements. By default, the placeholder elements have a `display` value of `block`, except if the parent is a table row group, in which case they default to `table-row`. Don't try to influence placeholder element width or height, including by causing them to have a border or `content` pseudo-elements.
+
+Any approach that stops the placeholders and content elements from rendering as a single vertical stack, or causes the content items to vary in height, prevents correct functioning of the `Virtualize` component.
+
 ::: moniker-end
 
 ::: moniker range=">= aspnetcore-5.0 < aspnetcore-6.0"
@@ -186,7 +270,7 @@ Without virtualization, a typical list might use a C# [`foreach`](/dotnet/csharp
 </div>
 ```
 
-If the collection contains thousands of flights, rendering the flights takes a long time and users experience a noticeable UI lag. Most of the flights aren't rendered because they fall outside of the height of the `<div>` element.
+If the collection contains thousands of flights, rendering the flights takes a long time and users experience a noticeable UI lag. Most of the flights aren't seen because they fall outside of the height of the `<div>` element.
 
 Instead of rendering the entire list of flights at once, replace the [`foreach`](/dotnet/csharp/language-reference/keywords/foreach-in) loop in the preceding example with the `Virtualize` component:
 

@@ -5,7 +5,7 @@ description: Learn how to secure Blazor WebAssembly apps as Single Page Applicat
 monikerRange: '>= aspnetcore-3.1'
 ms.author: riande
 ms.custom: mvc
-ms.date: 10/27/2020
+ms.date: 11/09/2021
 no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: blazor/security/webassembly/index
 ---
@@ -33,6 +33,9 @@ Other options for authenticating SPAs exist, such as the use of SameSite cookies
 * Self-contained JWTs offer guarantees to the client and server about the authentication process. For example, a client has the means to detect and validate that the tokens it receives are legitimate and were emitted as part of a given authentication process. If a third party attempts to switch a token in the middle of the authentication process, the client can detect the switched token and avoid using it.
 * Tokens with OAuth and OIDC don't rely on the user agent behaving correctly to ensure that the app is secure.
 * Token-based protocols, such as OAuth and OIDC, allow for authenticating and authorizing hosted and standalone apps with the same set of security characteristics.
+
+> [!IMPORTANT]
+> [Prerendering](xref:blazor/components/prerendering-and-integration) isn't supported for authentication endpoints (`/authentication/` path segment). For more information, see <xref:blazor/security/webassembly/additional-scenarios#support-prerendering-with-authentication>.
 
 ## Authentication process with OIDC
 

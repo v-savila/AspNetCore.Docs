@@ -5,7 +5,7 @@ description: Learn how to flow data from an ancestor component to descendent com
 monikerRange: '>= aspnetcore-3.1'
 ms.author: riande
 ms.custom: mvc
-ms.date: 02/02/2021
+ms.date: 11/09/2021
 no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: blazor/components/cascading-values-and-parameters
 ---
@@ -28,15 +28,7 @@ The following `ThemeInfo` C# class is placed in a folder named `UIThemeClasses` 
 
 `UIThemeClasses/ThemeInfo.cs`:
 
-```csharp
-namespace BlazorSample.UIThemeClasses
-{
-    public class ThemeInfo
-    {
-        public string ButtonClass { get; set; }
-    }
-}
-```
+[!code-csharp[](~/blazor/samples/6.0/BlazorSample_WebAssembly/UIThemeClasses/ThemeInfo.cs)]
 
 The following [layout component](xref:blazor/components/layouts) specifies theme information (`ThemeInfo`) as a cascading value for all components that make up the layout body of the <xref:Microsoft.AspNetCore.Components.LayoutComponentBase.Body> property. `ButtonClass` is assigned a value of [`btn-success`](https://getbootstrap.com/docs/5.0/components/buttons/), which is a Bootstrap button style. Any descendent component in the component hierarchy can use the `ButtonClass` property through the `ThemeInfo` cascading value.
 
@@ -52,7 +44,7 @@ The following component binds the `ThemeInfo` cascading value to a cascading par
 
 `Pages/ThemedCounter.razor`:
 
-[!code-razor[](~/blazor/samples/6.0/BlazorSample_WebAssembly/Pages/ThemedCounter.razor?highlight=2,15-17,23-24)]
+[!code-razor[](~/blazor/samples/6.0/BlazorSample_WebAssembly/Pages/ThemedCounter.razor)]
 
 ## Cascade multiple values
 
@@ -68,26 +60,22 @@ In the following example, two [`CascadingValue`](xref:Microsoft.AspNetCore.Compo
 </CascadingValue>
 
 @code {
-    private CascadingType parentCascadeParameter1;
+    private CascadingType? parentCascadeParameter1;
 
     [Parameter]
-    public CascadingType ParentCascadeParameter2 { get; set; }
-
-    ...
+    public CascadingType? ParentCascadeParameter2 { get; set; }
 }
 ```
 
 In a descendant component, the cascaded parameters receive their cascaded values from the ancestor component by <xref:Microsoft.AspNetCore.Components.CascadingValue%601.Name%2A>:
 
 ```razor
-...
-
 @code {
     [CascadingParameter(Name = "CascadeParam1")]
-    protected CascadingType ChildCascadeParameter1 { get; set; }
-    
+    protected CascadingType? ChildCascadeParameter1 { get; set; }
+
     [CascadingParameter(Name = "CascadeParam2")]
-    protected CascadingType ChildCascadeParameter2 { get; set; }
+    protected CascadingType? ChildCascadeParameter2 { get; set; }
 }
 ```
 
@@ -139,13 +127,13 @@ Child `Tab` components aren't explicitly passed as parameters to the `TabSet`. I
 
 @code {
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 
-    public ITab ActiveTab { get; private set; }
+    public ITab? ActiveTab { get; private set; }
 
     public void AddTab(ITab tab)
     {
-        if (ActiveTab == null)
+        if (ActiveTab is null)
         {
             SetActiveTab(tab);
         }
@@ -178,25 +166,25 @@ Descendent `Tab` components capture the containing `TabSet` as a cascading param
 
 @code {
     [CascadingParameter]
-    public TabSet ContainerTabSet { get; set; }
+    public TabSet? ContainerTabSet { get; set; }
 
     [Parameter]
-    public string Title { get; set; }
+    public string? Title { get; set; }
 
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 
-    private string TitleCssClass => 
-        ContainerTabSet.ActiveTab == this ? "active" : null;
+    private string? TitleCssClass => 
+        ContainerTabSet?.ActiveTab == this ? "active" : null;
 
     protected override void OnInitialized()
     {
-        ContainerTabSet.AddTab(this);
+        ContainerTabSet?.AddTab(this);
     }
 
     private void ActivateTab()
     {
-        ContainerTabSet.SetActiveTab(this);
+        ContainerTabSet?.SetActiveTab(this);
     }
 }
 ```
@@ -255,15 +243,7 @@ The following `ThemeInfo` C# class is placed in a folder named `UIThemeClasses` 
 
 `UIThemeClasses/ThemeInfo.cs`:
 
-```csharp
-namespace BlazorSample.UIThemeClasses
-{
-    public class ThemeInfo
-    {
-        public string ButtonClass { get; set; }
-    }
-}
-```
+[!code-csharp[](~/blazor/samples/5.0/BlazorSample_WebAssembly/UIThemeClasses/ThemeInfo.cs)]
 
 The following [layout component](xref:blazor/components/layouts) specifies theme information (`ThemeInfo`) as a cascading value for all components that make up the layout body of the <xref:Microsoft.AspNetCore.Components.LayoutComponentBase.Body> property. `ButtonClass` is assigned a value of [`btn-success`](https://getbootstrap.com/docs/5.0/components/buttons/), which is a Bootstrap button style. Any descendent component in the component hierarchy can use the `ButtonClass` property through the `ThemeInfo` cascading value.
 
@@ -482,15 +462,7 @@ The following `ThemeInfo` C# class is placed in a folder named `UIThemeClasses` 
 
 `UIThemeClasses/ThemeInfo.cs`:
 
-```csharp
-namespace BlazorSample.UIThemeClasses
-{
-    public class ThemeInfo
-    {
-        public string ButtonClass { get; set; }
-    }
-}
-```
+[!code-csharp[](~/blazor/samples/3.1/BlazorSample_WebAssembly/UIThemeClasses/ThemeInfo.cs)]
 
 The following [layout component](xref:blazor/components/layouts) specifies theme information (`ThemeInfo`) as a cascading value for all components that make up the layout body of the <xref:Microsoft.AspNetCore.Components.LayoutComponentBase.Body> property. `ButtonClass` is assigned a value of [`btn-success`](https://getbootstrap.com/docs/5.0/components/buttons/), which is a Bootstrap button style. Any descendent component in the component hierarchy can use the `ButtonClass` property through the `ThemeInfo` cascading value.
 

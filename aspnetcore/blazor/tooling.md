@@ -5,7 +5,7 @@ description: Learn about the tooling available to build Blazor apps.
 monikerRange: '>= aspnetcore-3.1'
 ms.author: riande
 ms.custom: mvc
-ms.date: 09/24/2021
+ms.date: 11/09/2021
 no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: blazor/tooling
 zone_pivot_groups: operating-systems
@@ -16,7 +16,7 @@ zone_pivot_groups: operating-systems
 
 ::: zone pivot="windows"
 
-1. Install the latest version of [Visual Studio 2022](https://visualstudio.microsoft.com/vs/preview/) with the **ASP.NET and web development** workload.
+1. Install the latest version of [Visual Studio 2022](https://visualstudio.microsoft.com) with the **ASP.NET and web development** workload.
 
 1. Create a new project.
 
@@ -28,7 +28,7 @@ zone_pivot_groups: operating-systems
 
    For information on the two Blazor hosting models, *Blazor WebAssembly* (standalone and hosted) and *Blazor Server*, see <xref:blazor/hosting-models>.
 
-1. Press <kbd>Ctrl</kbd>+<kbd>F5</kbd> to run the app.
+1. Press <kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows) or <kbd>⌘</kbd>+<kbd>F5</kbd> (macOS) to run the app.
 
    When running a hosted Blazor WebAssembly solution in Visual Studio, the startup project of the solution is the **`Server`** project.
 
@@ -214,7 +214,7 @@ When executing a hosted Blazor WebAssembly app, run the app from the solution's 
    }
    ```
 
-1. Press <kbd>Ctrl</kbd>+<kbd>F5</kbd> to run the app.
+1. Press <kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows) or <kbd>⌘</kbd>+<kbd>F5</kbd> (macOS) to run the app.
 
 > [!NOTE]
 > Only [browser debugging](xref:blazor/debug#debug-in-the-browser) is supported at this time.
@@ -281,35 +281,22 @@ For more information on template options, see the following resources:
   * `dotnet new blazorserver -h`
   * `dotnet new blazorwasm -h`
 
-## .NET Hot reload
+## .NET WebAssembly build tools
 
-.NET Hot Reload applies code changes, including changes to stylesheets, to a running app without restarting the app and without losing app state.
+The **.NET WebAssembly build tools** are based on [Emscripten](https://emscripten.org/), a compiler toolchain for the web platform. To install the **.NET WebAssembly build tools**, use ***either*** of the following approaches:
 
-Hot Reload is activated using the [`dotnet watch`](xref:tutorials/dotnet-watch) command:
+* For the **ASP.NET and web development** workload in the Visual Studio installer, select the **.NET WebAssembly build tools** option from the list of optional components.
+* Run `dotnet workload install wasm-tools` in a command shell.
 
-```dotnetcli
-dotnet watch
-```
+For more information, see the following resources:
 
-To force the app to rebuild and restart, use the keyboard combination <kbd>Ctrl</kbd>+<kbd>R</kbd> in the command shell.
-
-When an unsupported code edit is made, called a *rude edit*, `dotnet watch` asks you if you want to restart the app:
-
-* **Yes**: Restarts the app.
-* **No**: Doesn't restart the app and leaves the app running without the changes applied.
-* **Always**: Restarts the app as needed when rude edits occur.
-* **Never**: Doesn't restart the app and avoids future prompts.
-
-To disable support for Hot Reload, pass the `--no-hot-reload` option to the `dotnet watch` command:
-
-```dotnetcli
-dotnet watch --no-hot-reload
-```
-
-For Blazor WebAssembly apps, only method body replacement is currently supported. Additional features will be added in upcoming releases of ASP.NET Core. For more information on supported scenarios, see [Supported code changes (C# and Visual Basic)](/visualstudio/debugger/supported-code-changes-csharp).
+* [Ahead-of-time (AOT) compilation](xref:blazor/host-and-deploy/webassembly#ahead-of-time-aot-compilation)
+* [Runtime relinking](xref:blazor/host-and-deploy/webassembly#runtime-relinking)
+* <xref:blazor/webassembly-native-dependencies>
 
 ## Additional resources
 
+* <xref:test/hot-reload>
 * <xref:blazor/hosting-models>
 * <xref:blazor/project-structure>
 
@@ -319,7 +306,7 @@ For Blazor WebAssembly apps, only method body replacement is currently supported
 
 ::: zone pivot="windows"
 
-1. Install the latest version of [Visual Studio 2022](https://visualstudio.microsoft.com/vs/preview/) with the **ASP.NET and web development** workload.
+1. Install the latest version of [Visual Studio 2022](https://visualstudio.microsoft.com) with the **ASP.NET and web development** workload.
 
 1. Create a new project.
 
@@ -331,7 +318,7 @@ For Blazor WebAssembly apps, only method body replacement is currently supported
 
    For information on the two Blazor hosting models, *Blazor WebAssembly* (standalone and hosted) and *Blazor Server*, see <xref:blazor/hosting-models>.
 
-1. Press <kbd>Ctrl</kbd>+<kbd>F5</kbd> to run the app.
+1. Press <kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows) or <kbd>⌘</kbd>+<kbd>F5</kbd> (macOS) to run the app.
 
    When running a hosted Blazor WebAssembly solution in Visual Studio, the startup project of the solution is the **`Server`** project.
 
@@ -478,7 +465,7 @@ When executing a hosted Blazor WebAssembly app, run the app from the solution's 
    ...
    ```
 
-1. Press <kbd>Ctrl</kbd>+<kbd>F5</kbd> to run the app.
+1. Press <kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows) or <kbd>⌘</kbd>+<kbd>F5</kbd> (macOS) to run the app.
 
 ## Trust a development certificate
 
@@ -549,7 +536,7 @@ dotnet new blazorserver -h
 
 ::: zone pivot="windows"
 
-1. Install the latest version of [Visual Studio 2022](https://visualstudio.microsoft.com/vs/preview/) with the **ASP.NET and web development** workload.
+1. Install the latest version of [Visual Studio 2022](https://visualstudio.microsoft.com) with the **ASP.NET and web development** workload.
 
 1. Create a new project.
 
@@ -561,7 +548,7 @@ dotnet new blazorserver -h
 
    For information on the two Blazor hosting models, *Blazor WebAssembly* (standalone and hosted) and *Blazor Server*, see <xref:blazor/hosting-models>.
 
-1. Press <kbd>Ctrl</kbd>+<kbd>F5</kbd> to run the app.
+1. Press <kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows) or <kbd>⌘</kbd>+<kbd>F5</kbd> (macOS) to run the app.
 
    When running a hosted Blazor WebAssembly solution in Visual Studio, the startup project of the solution is the **`Server`** project.
 
@@ -708,7 +695,7 @@ When executing a hosted Blazor WebAssembly app, run the app from the solution's 
    ...
    ```
 
-1. Press <kbd>Ctrl</kbd>+<kbd>F5</kbd> to run the app.
+1. Press <kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows) or <kbd>⌘</kbd>+<kbd>F5</kbd> (macOS) to run the app.
 
 ## Trust a development certificate
 

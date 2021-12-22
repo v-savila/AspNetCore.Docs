@@ -5,7 +5,7 @@ description: Build a Blazor app step-by-step.
 monikerRange: '>= aspnetcore-3.1'
 ms.author: riande
 ms.custom: mvc
-ms.date: 02/12/2021
+ms.date: 11/09/2021
 no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: tutorials/build-a-blazor-app
 zone_pivot_groups: blazor-hosting-models
@@ -170,7 +170,7 @@ cd TodoList
 
 1. Add items, edit items, and mark todo items done to test the component.
 
-1. When finished, shut down the app in the command shell. Many command shells accept the keyboard command <kbd>Ctrl</kbd>+<kbd>c</kbd> to stop an app.
+1. When finished, shut down the app in the command shell. Many command shells accept the keyboard command <kbd>Ctrl</kbd>+<kbd>C</kbd> (Windows) or <kbd>⌘</kbd>+<kbd>C</kbd> (macOS) to stop an app.
 
 ## Next steps
 
@@ -347,7 +347,7 @@ cd TodoList
 
 1. Add items, edit items, and mark todo items done to test the component.
 
-1. When finished, shut down the app in the command shell. Many command shells accept the keyboard command <kbd>Ctrl</kbd>+<kbd>c</kbd> to stop an app.
+1. When finished, shut down the app in the command shell. Many command shells accept the keyboard command <kbd>Ctrl</kbd>+<kbd>C</kbd> (Windows) or <kbd>⌘</kbd>+<kbd>C</kbd> (macOS) to stop an app.
 
 ## Next steps
 
@@ -524,7 +524,7 @@ cd TodoList
 
 1. Add items, edit items, and mark todo items done to test the component.
 
-1. When finished, shut down the app in the command shell. Many command shells accept the keyboard command <kbd>Ctrl</kbd>+<kbd>c</kbd> to stop an app.
+1. When finished, shut down the app in the command shell. Many command shells accept the keyboard command <kbd>Ctrl</kbd>+<kbd>C</kbd> (Windows) or <kbd>⌘</kbd>+<kbd>C</kbd> (macOS) to stop an app.
 
 ## Next steps
 

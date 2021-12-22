@@ -5,7 +5,7 @@ description: Learn how to secure an ASP.NET Core Blazor WebAssembly standalone a
 monikerRange: '>= aspnetcore-3.1'
 ms.author: riande
 ms.custom: mvc
-ms.date: 10/27/2020
+ms.date: 11/09/2021
 no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: blazor/security/webassembly/standalone-with-azure-active-directory-b2c
 ---
@@ -54,13 +54,13 @@ In an empty folder, replace the placeholders in the following command with the i
 dotnet new blazorwasm -au IndividualB2C --aad-b2c-instance "{AAD B2C INSTANCE}" --client-id "{CLIENT ID}" --domain "{TENANT DOMAIN}" -o {APP NAME} -ssp "{SIGN UP OR SIGN IN POLICY}"
 ```
 
-| Placeholder                   | Azure portal name               | Example                                |
-| ----------------------------- | ------------------------------- | -------------------------------------- |
-| `{AAD B2C INSTANCE}`          | Instance                        | `https://contoso.b2clogin.com/`        |
-| `{APP NAME}`                  | &mdash;                         | `BlazorSample`                         |
-| `{CLIENT ID}`                 | Application (client) ID         | `41451fa7-82d9-4673-8fa5-69eff5a761fd` |
-| `{SIGN UP OR SIGN IN POLICY}` | Sign-up/sign-in user flow       | `B2C_1_signupsignin1`                  |
-| `{TENANT DOMAIN}`             | Primary/Publisher/Tenant domain | `contoso.onmicrosoft.com`              |
+| Placeholder                   | Azure portal name               | Example                                                       |
+| ----------------------------- | ------------------------------- | ------------------------------------------------------------- |
+| `{AAD B2C INSTANCE}`          | Instance                        | `https://contoso.b2clogin.com/` (includes the trailing slash) |
+| `{APP NAME}`                  | &mdash;                         | `BlazorSample`                                                |
+| `{CLIENT ID}`                 | Application (client) ID         | `41451fa7-82d9-4673-8fa5-69eff5a761fd`                        |
+| `{SIGN UP OR SIGN IN POLICY}` | Sign-up/sign-in user flow       | `B2C_1_signupsignin1`                                         |
+| `{TENANT DOMAIN}`             | Primary/Publisher/Tenant domain | `contoso.onmicrosoft.com`                                     |
 
 The output location specified with the `-o|--output` option creates a project folder if it doesn't exist and becomes part of the app's name.
 
@@ -84,14 +84,9 @@ After creating the app, you should be able to:
 
 When an app is created to use an Individual B2C Account (`IndividualB2C`), the app automatically receives a package reference for the [Microsoft Authentication Library](/azure/active-directory/develop/msal-overview) ([`Microsoft.Authentication.WebAssembly.Msal`](https://www.nuget.org/packages/Microsoft.Authentication.WebAssembly.Msal)). The package provides a set of primitives that help the app authenticate users and obtain tokens to call protected APIs.
 
-If adding authentication to an app, manually add the package to the app's project file:
+If adding authentication to an app, manually add the [`Microsoft.Authentication.WebAssembly.Msal`](https://www.nuget.org/packages/Microsoft.Authentication.WebAssembly.Msal) package to the app.
 
-```xml
-<PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" 
-  Version="{VERSION}" />
-```
-
-For the placeholder `{VERSION}`, the latest stable version of the package that matches the app's shared framework version can be found in the package's **Version History** at [NuGet.org](https://www.nuget.org/packages/Microsoft.Authentication.WebAssembly.Msal).
+[!INCLUDE[](~/includes/package-reference.md)]
 
 The [`Microsoft.Authentication.WebAssembly.Msal`](https://www.nuget.org/packages/Microsoft.Authentication.WebAssembly.Msal) package transitively adds the [`Microsoft.AspNetCore.Components.WebAssembly.Authentication`](https://www.nuget.org/packages/Microsoft.AspNetCore.Components.WebAssembly.Authentication) package to the app.
 
@@ -121,6 +116,8 @@ Configuration is supplied by the `wwwroot/appsettings.json` file:
   }
 }
 ```
+
+In the preceding configuration, the `{AAD B2C INSTANCE}` includes a trailing slash.
 
 Example:
 
@@ -274,14 +271,9 @@ After creating the app, you should be able to:
 
 When an app is created to use an Individual B2C Account (`IndividualB2C`), the app automatically receives a package reference for the [Microsoft Authentication Library](/azure/active-directory/develop/msal-overview) ([`Microsoft.Authentication.WebAssembly.Msal`](https://www.nuget.org/packages/Microsoft.Authentication.WebAssembly.Msal)). The package provides a set of primitives that help the app authenticate users and obtain tokens to call protected APIs.
 
-If adding authentication to an app, manually add the package to the app's project file:
+If adding authentication to an app, manually add the [`Microsoft.Authentication.WebAssembly.Msal`](https://www.nuget.org/packages/Microsoft.Authentication.WebAssembly.Msal) package to the app.
 
-```xml
-<PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" 
-  Version="{VERSION}" />
-```
-
-For the placeholder `{VERSION}`, the latest stable version of the package that matches the app's shared framework version can be found in the package's **Version History** at [NuGet.org](https://www.nuget.org/packages/Microsoft.Authentication.WebAssembly.Msal).
+[!INCLUDE[](~/includes/package-reference.md)]
 
 The [`Microsoft.Authentication.WebAssembly.Msal`](https://www.nuget.org/packages/Microsoft.Authentication.WebAssembly.Msal) package transitively adds the [`Microsoft.AspNetCore.Components.WebAssembly.Authentication`](https://www.nuget.org/packages/Microsoft.AspNetCore.Components.WebAssembly.Authentication) package to the app.
 
@@ -462,14 +454,9 @@ After creating the app, you should be able to:
 
 When an app is created to use an Individual B2C Account (`IndividualB2C`), the app automatically receives a package reference for the [Microsoft Authentication Library](/azure/active-directory/develop/msal-overview) ([`Microsoft.Authentication.WebAssembly.Msal`](https://www.nuget.org/packages/Microsoft.Authentication.WebAssembly.Msal)). The package provides a set of primitives that help the app authenticate users and obtain tokens to call protected APIs.
 
-If adding authentication to an app, manually add the package to the app's project file:
+If adding authentication to an app, manually add the [`Microsoft.Authentication.WebAssembly.Msal`](https://www.nuget.org/packages/Microsoft.Authentication.WebAssembly.Msal) package to the app.
 
-```xml
-<PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" 
-  Version="{VERSION}" />
-```
-
-For the placeholder `{VERSION}`, the latest stable version of the package that matches the app's shared framework version can be found in the package's **Version History** at [NuGet.org](https://www.nuget.org/packages/Microsoft.Authentication.WebAssembly.Msal).
+[!INCLUDE[](~/includes/package-reference.md)]
 
 The [`Microsoft.Authentication.WebAssembly.Msal`](https://www.nuget.org/packages/Microsoft.Authentication.WebAssembly.Msal) package transitively adds the [`Microsoft.AspNetCore.Components.WebAssembly.Authentication`](https://www.nuget.org/packages/Microsoft.AspNetCore.Components.WebAssembly.Authentication) package to the app.
 

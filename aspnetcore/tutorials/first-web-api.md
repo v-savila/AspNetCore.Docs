@@ -69,7 +69,10 @@ For Visual Studio for Mac, see the .NET 5 version of this tutorial.
 * Enter *Web API* in the search box.
 * Select the **ASP.NET Core Web API** template and select **Next**.
 * In the **Configure your new project dialog**, name the project *TodoApi* and select **Next**.
-* In the **Additional information** dialog, confirm that **Framework** is **.NET 6.0 (Preview)**, and select **Create**.
+* In the **Additional information** dialog:
+  * Confirm the **Framework** is **.NET 6.0 (Long-term support)**.
+  * Confirm the checkbox for **Use controllers(uncheck to use minimal APIs)** is checked.
+  * Select **Create**.
 
 # [Visual Studio Code](#tab/visual-studio-code)
 
@@ -151,7 +154,7 @@ Run the app:
 * Select the **.NET Core** task template.
 * Press Ctrl+F5.
 
-In a browser, go to following URL: [https://localhost:5001/swagger](https://localhost:5001/swagger)
+In a browser, navigate to `https://localhost:<port>/swagger`, where `<port>` is the randomly chosen port number displayed in the output.
 
 # [Visual Studio for Mac](#tab/visual-studio-mac)
 
@@ -568,6 +571,7 @@ Date: Tue, 07 Sep 2021 21:43:00 GMT
 Server: Kestrel
 ```
 
+<a name="over-post"></a>
 ## Prevent over-posting
 
 Currently the sample app exposes the entire `TodoItem` object. Production apps typically limit the data that's input and returned using a subset of the model. There are multiple reasons behind this, and security is a major one. The subset of a model is usually referred to as a Data Transfer Object (DTO), input model, or view model. **DTO** is used in this tutorial.

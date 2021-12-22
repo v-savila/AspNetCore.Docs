@@ -26,7 +26,7 @@ The sample app is a Razor Pages app and assumes a basic understanding of Razor P
 * [Razor Pages unit tests](xref:test/razor-pages-tests)
 
 > [!NOTE]
-> For testing SPAs, we recommended a tool such as [Selenium](https://www.seleniumhq.org/), which can automate a browser.
+> For testing SPAs, we recommended a tool such as [Playwright for .NET](https://playwright.dev/dotnet/), which can automate a browser.
 
 ## Introduction to integration tests
 
@@ -117,6 +117,43 @@ Entity Framework Core is also used in the tests. The app references:
 If the SUT's [environment](xref:fundamentals/environments) isn't set, the environment defaults to Development.
 
 ## Basic tests with the default WebApplicationFactory
+
+::: moniker range=">= aspnetcore-6.0"
+
+ASP.NET Core 6 introduced [`WebApplication`](/dotnet/api/microsoft.aspnetcore.builder.webapplication) which removed the need for a `Startup` class. To test with `WebApplicationFactory` without a `Startup` class, an ASP.NET Core 6 app needs to expose the implicitly defined `Program` class to the test project in **one** of the following ways:
+
+* Expose internal types from the web app to the test project. This can be done in the project file (`.csproj`):
+  ```xml
+  <ItemGroup>
+       <InternalsVisibleTo Include="MyTestProject" />
+  </ItemGroup>
+  ```
+* Make the `Program` class public using a partial class declaration:
+  ```diff
+  var builder = WebApplication.CreateBuilder(args);
+  // ... Configure services, routes, etc.
+  app.Run();
+  + public partial class Program { }
+  ```
+
+After making the changes in the web application, the test project now can use the `Program` class for the `WebApplicationFactory`.
+
+```csharp
+[Fact]
+public async Task HelloWorldTest()
+{
+    var application = new WebApplicationFactory<Program>()
+        .WithWebHostBuilder(builder =>
+        {
+            // ... Configure test services
+        });
+        
+    var client = application.CreateClient();
+    //...
+}
+```
+
+::: moniker-end
 
 [`WebApplicationFactory<TEntryPoint>`](/dotnet/api/microsoft.aspnetcore.mvc.testing.webapplicationfactory-1) is used to create a [`TestServer`](/dotnet/api/microsoft.aspnetcore.testhost.testserver) for the integration tests. `TEntryPoint` is the entry point class of the SUT, usually the `Startup` class.
 
@@ -327,9 +364,9 @@ The `WebApplicationFactory` constructor infers the app [content root](xref:funda
 
 ## Disable shadow copying
 
-Shadow copying causes the tests to execute in a different directory than the output directory. For tests to work properly, shadow copying must be disabled. The [sample app](https://github.com/dotnet/AspNetCore.Docs/tree/main/aspnetcore/test/integration-tests/samples) uses xUnit and disables shadow copying for xUnit by including an `xunit.runner.json` file with the correct configuration setting. For more information, see the [xUnit documentation](https://xunit.net/docs/configuration-files).
+Shadow copying causes the tests to execute in a different directory than the output directory. If your tests rely on loading files relative to `Assembly.Location` and you encounter issues, you might have to disable shadow copying.
 
-Add the `xunit.runner.json` file to root of the test project with the following content:
+To disable shadow copying when using xUnit, create a `xunit.runner.json` file in your test project directory, with the [correct configuration setting](https://xunit.net/docs/configuration-files#shadowCopy):
 
 ```json
 {

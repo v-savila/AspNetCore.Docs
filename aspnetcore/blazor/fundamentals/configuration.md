@@ -5,7 +5,7 @@ description: Learn about configuration of Blazor apps, including app settings, a
 monikerRange: '>= aspnetcore-3.1'
 ms.author: riande
 ms.custom: mvc
-ms.date: 12/10/2020
+ms.date: 11/09/2021
 no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: blazor/fundamentals/configuration
 ---
@@ -189,13 +189,9 @@ builder.Services.AddOidcAuthentication(options =>
 
 ## Logging configuration
 
-Add a package reference for [`Microsoft.Extensions.Logging.Configuration`](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Configuration) to the app's project file:
+Add the [`Microsoft.Extensions.Logging.Configuration`](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Configuration) package to the app.
 
-```xml
-<PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="{VERSION}" />
-```
-
-In the preceding example, the `{VERSION}` placeholder is the package's version. Package versions are found at [NuGet.org](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Configuration).
+[!INCLUDE[](~/includes/package-reference.md)]
 
 In the app settings file, provide logging configuration. The logging configuration is loaded in `Program.cs`.
 
@@ -206,8 +202,7 @@ In the app settings file, provide logging configuration. The logging configurati
   "Logging": {
     "LogLevel": {
       "Default": "Information",
-      "Microsoft": "Warning",
-      "Microsoft.Hosting.Lifetime": "Information"
+      "Microsoft.AspNetCore": "Warning"
     }
   }
 }
@@ -425,13 +420,9 @@ builder.Services.AddOidcAuthentication(options =>
 
 ## Logging configuration
 
-Add a package reference for [`Microsoft.Extensions.Logging.Configuration`](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Configuration) to the app's project file:
+Add the [`Microsoft.Extensions.Logging.Configuration`](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Configuration) package to the app.
 
-```xml
-<PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="{VERSION}" />
-```
-
-In the preceding example, the `{VERSION}` placeholder is the package's version. Package versions are found at [NuGet.org](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Configuration).
+[!INCLUDE[](~/includes/package-reference.md)]
 
 In the app settings file, provide logging configuration. The logging configuration is loaded in `Program.cs`.
 
@@ -661,13 +652,9 @@ builder.Services.AddOidcAuthentication(options =>
 
 ## Logging configuration
 
-Add a package reference for [`Microsoft.Extensions.Logging.Configuration`](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Configuration) to the app's project file:
+Add the [`Microsoft.Extensions.Logging.Configuration`](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Configuration) package to the app.
 
-```xml
-<PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="{VERSION}" />
-```
-
-In the preceding example, the `{VERSION}` placeholder is the package's version. Package versions are found at [NuGet.org](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Configuration).
+[!INCLUDE[](~/includes/package-reference.md)]
 
 In the app settings file, provide logging configuration. The logging configuration is loaded in `Program.cs`.
 

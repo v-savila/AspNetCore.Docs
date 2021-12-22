@@ -5,7 +5,7 @@ description: Learn how to create and use Razor components in Blazor apps, includ
 monikerRange: '>= aspnetcore-3.1'
 ms.author: riande
 ms.custom: mvc
-ms.date: 04/19/2021
+ms.date: 11/09/2021
 no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: blazor/components/index
 ---
@@ -54,19 +54,7 @@ The following `HelloWorld` component uses a route template of `/hello-world`. Th
 
 The preceding component loads in the browser at `/hello-world` regardless of whether or not you add the component to the app's UI navigation. Optionally, components can be added to the `NavMenu` component so that a link to the component appears in the app's UI-based navigation.
 
-For the preceding `HelloWorld` component, add the following `NavLink` component to the `NavMenu` component. Add the `NavLink` component in a new list item (`<li>...</li>`) between the unordered list tags (`<ul>...</ul>`).
-
-`Shared/NavMenu.razor`:
-
-```razor
-<li class="nav-item px-3">
-    <NavLink class="nav-link" href="hello-world">
-        <span class="oi oi-list-rich" aria-hidden="true"></span> Hello World!
-    </NavLink>
-</li>
-```
-
-For more information, including descriptions of the `NavLink` and `NavMenu` components, see <xref:blazor/fundamentals/routing>.
+For the preceding `HelloWorld` component, you can add a `NavLink` component to the `NavMenu` component in the `Shared` folder. For more information, including descriptions of the `NavLink` and `NavMenu` components, see <xref:blazor/fundamentals/routing>.
 
 ### Markup
 
@@ -170,32 +158,11 @@ The following `Counter` component splits HTML and Razor markup from  C# code usi
 
 `Pages/CounterPartialClass.razor`:
 
-```razor
-@page "/counter-partial-class"
-
-<h1>Counter</h1>
-
-<p>Current count: @currentCount</p>
-
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
-```
+[!code-razor[](~/blazor/samples/6.0/BlazorSample_WebAssembly/Pages/index/CounterPartialClass.razor)]
 
 `Pages/CounterPartialClass.razor.cs`:
 
-```csharp
-namespace BlazorSample.Pages
-{
-    public partial class CounterPartialClass
-    {
-        private int currentCount = 0;
-
-        void IncrementCount()
-        {
-            currentCount++;
-        }
-    }
-}
-```
+[!code-csharp[](~/blazor/samples/6.0/BlazorSample_WebAssembly/Pages/index/CounterPartialClass.razor.cs)]
 
 [`@using`][2] directives in the `_Imports.razor` file are only applied to Razor files (`.razor`), not C# files (`.cs`). Add namespaces to a partial class file as needed.
 
@@ -318,7 +285,7 @@ To obtain a value for the `Title` parameter in the preceding example asynchronou
 <ParameterChild Title="@title" />
 
 @code {
-    private string title;
+    private string? title;
     
     protected override async Task OnInitializedAsync()
     {
@@ -375,19 +342,19 @@ public DateTime StartData { get; set; } = DateTime.Now;
 
 After the initial assignment of <xref:System.DateTime.Now?displayProperty=nameWithType>, do **not** assign a value to `StartData` in developer code. For more information, see the [Overwritten parameters](#overwritten-parameters) section of this article.
 
-Apply the `[EditorRequired]` attribute to specify a required component parameter. If a parameter value isn't provided, editors or build tools may display warnings to the user. This attribute is only valid on properties also marked with the `[Parameter]` attribute. The `[EditorRequired]` attribute is enforced at design-time and when the app is built. The attribute isn't enforced at runtime, and it doesn't guarantee a non-`null` parameter value.
+Apply the [`[EditorRequired]` attribute](xref:Microsoft.AspNetCore.Components.EditorRequiredAttribute) to specify a required component parameter. If a parameter value isn't provided, editors or build tools may display warnings to the user. This attribute is only valid on properties also marked with the [`[Parameter]` attribute](xref:Microsoft.AspNetCore.Components.ParameterAttribute). The <xref:Microsoft.AspNetCore.Components.EditorRequiredAttribute> is enforced at design-time and when the app is built. The attribute isn't enforced at runtime, and it doesn't guarantee a non-`null` parameter value.
 
 ```csharp
 [Parameter]
 [EditorRequired]
-public string Title { get; set; }
+public string? Title { get; set; }
 ```
 
 Single-line attribute lists are also supported:
 
 ```csharp
 [Parameter, EditorRequired]
-public string Title { get; set; }
+public string? Title { get; set; }
 ```
 
 ## Route parameters
@@ -546,7 +513,7 @@ To accept arbitrary attributes, define a [component parameter](#component-parame
 ```razor
 @code {
     [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object> InputAttributes { get; set; }
+    public Dictionary<string, object>? InputAttributes { get; set; }
 }
 ```
 
@@ -983,7 +950,7 @@ The following example demonstrates:
     private string message = "Lorem ipsum dolor sit amet, consectetur adipiscing " +
         "elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 
-    private string value;
+    private string? value;
 }
 ```
 
@@ -1039,7 +1006,7 @@ To render a Razor component from JS, register the component as a root component 
   > [!NOTE]
   > The preceding code example requires a namespace for the app's components (for example, `using BlazorSample.Pages;`) in the `Program.cs` file.
 
-* In a Blazor WebAssembly app, call `RegisterForJavaScript` on <xref:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder.RootComponents> in `Program.cs`:
+* In a Blazor WebAssembly app, call <xref:Microsoft.AspNetCore.Components.Web.JSComponentConfigurationExtensions.RegisterForJavaScript%2A> on <xref:Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder.RootComponents> in `Program.cs`:
 
   ```csharp
   builder.RootComponents.RegisterForJavaScript<Counter>(identifier: "counter");
@@ -1057,7 +1024,10 @@ await Blazor.rootComponents.add(containerElement, 'counter', { incrementAmount: 
 
 ## Blazor custom elements
 
-Experimental support is available for building custom elements using the [`Microsoft.AspNetCore.Components.CustomElements` NuGet package](https://www.nuget.org/packages/microsoft.aspnetcore.components.customelements). Custom elements use standard HTML interfaces to implement custom HTML elements.
+*Experimental* support is available for building custom elements using the [`Microsoft.AspNetCore.Components.CustomElements` NuGet package](https://www.nuget.org/packages/microsoft.aspnetcore.components.customelements). Custom elements use standard HTML interfaces to implement custom HTML elements.
+
+> [!WARNING]
+> Experimental features are provided for the purpose of exploring feature viability and may not ship in a stable version.
 
 Register a root component as a custom element:
 
@@ -1145,19 +1115,7 @@ The following `HelloWorld` component uses a route template of `/hello-world`. Th
 
 The preceding component loads in the browser at `/hello-world` regardless of whether or not you add the component to the app's UI navigation. Optionally, components can be added to the `NavMenu` component so that a link to the component appears in the app's UI-based navigation.
 
-For the preceding `HelloWorld` component, add the following `NavLink` component to the `NavMenu` component. Add the `NavLink` component in a new list item (`<li>...</li>`) between the unordered list tags (`<ul>...</ul>`).
-
-`Shared/NavMenu.razor`:
-
-```razor
-<li class="nav-item px-3">
-    <NavLink class="nav-link" href="hello-world">
-        <span class="oi oi-list-rich" aria-hidden="true"></span> Hello World!
-    </NavLink>
-</li>
-```
-
-For more information, including descriptions of the `NavLink` and `NavMenu` components, see <xref:blazor/fundamentals/routing>.
+For the preceding `HelloWorld` component, you can add a `NavLink` component to the `NavMenu` component in the `Shared` folder. For more information, including descriptions of the `NavLink` and `NavMenu` components, see <xref:blazor/fundamentals/routing>.
 
 ### Markup
 
@@ -2096,19 +2054,7 @@ The following `HelloWorld` component uses a route template of `/hello-world`. Th
 
 The preceding component loads in the browser at `/hello-world` regardless of whether or not you add the component to the app's UI navigation. Optionally, components can be added to the `NavMenu` component so that a link to the component appears in the app's UI-based navigation.
 
-For the preceding `HelloWorld` component, add the following `NavLink` component to the `NavMenu` component. Add the `NavLink` component in a new list item (`<li>...</li>`) between the unordered list tags (`<ul>...</ul>`).
-
-`Shared/NavMenu.razor`:
-
-```razor
-<li class="nav-item px-3">
-    <NavLink class="nav-link" href="hello-world">
-        <span class="oi oi-list-rich" aria-hidden="true"></span> Hello World!
-    </NavLink>
-</li>
-```
-
-For more information, including descriptions of the `NavLink` and `NavMenu` components, see <xref:blazor/fundamentals/routing>.
+For the preceding `HelloWorld` component, you can add a `NavLink` component to the `NavMenu` component in the `Shared` folder. For more information, including descriptions of the `NavLink` and `NavMenu` components, see <xref:blazor/fundamentals/routing>.
 
 ### Markup
 

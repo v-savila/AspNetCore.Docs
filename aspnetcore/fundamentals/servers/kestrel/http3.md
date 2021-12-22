@@ -49,7 +49,7 @@ HTTP/3 isn't currently supported on macOS and may be available in a future relea
 
 HTTP/3 is not enabled by default. Add configuration to *Program.cs* to enable HTTP/3.
 
-[!code-csharp[](samples/6.x/Http3Sample/Program.cs?name=snippet_UseHttp3&highlight=7-8)]
+:::code language="csharp" source="samples/6.x/KestrelSample/Snippets/Program.cs" id="snippet_Http3" highlight="7-8":::
 
 The preceding code configures port 5001 to:
 
@@ -66,8 +66,8 @@ HTTP/3 is discovered as an upgrade from HTTP/1.1 or HTTP/2 via the `alt-svc` hea
 
 ## Localhost testing
 
-* Browsers do not enable HTTP/3 on localhost or loopback connections. To test with a browser, run the client and server on separate machines. For example, use a Virtual Machine, [Windows Subsystem for Linux](/windows/wsl/), or [Windows Sandbox](/windows/security/threat-protection/windows-sandbox/windows-sandbox-overview).
-* `HttpClient` can be used for localhost/loopback testing in .NET 6 or later. Extra configured is required when using `HttpClient` to make an HTTP/3 request:
+* Browsers don't allow self-signed certificates on HTTP/3 such as the Kestel development certificate.
+* `HttpClient` can be used for localhost/loopback testing in .NET 6 or later. Extra configuration is required when using `HttpClient` to make an HTTP/3 request:
 
   * Set `HttpRequestMessage.Version` to 3.0, or
   * Set `HttpRequestMessage.VersionPolicy` to `HttpVersionPolicy.RequestVersionOrHigher`.
@@ -80,8 +80,8 @@ Some HTTPS scenarios are not yet supported for HTTP/3 in Kestrel. When calling `
 
 Calling the following implementations of `Microsoft.AspNetCore.Hosting.ListenOptionsHttpsExtensions.UseHttps` throw an error when using HTTP/3:
 
-* `UseHttps(this ListenOptions listenOptions, ServerOptionsSelectionCallback serverOptionsSelectionCallback, object state, TimeSpan handshakeTimeout)`
-* `UseHttps(this ListenOptions listenOptions, TlsHandshakeCallbackOptions callbackOptions)`
+* [UseHttps(this ListenOptions listenOptions, ServerOptionsSelectionCallback serverOptionsSelectionCallback, object state, TimeSpan handshakeTimeout)](xref:Microsoft.AspNetCore.Hosting.ListenOptionsHttpsExtensions.UseHttps(Microsoft.AspNetCore.Server.Kestrel.Core.ListenOptions,System.Net.Security.ServerOptionsSelectionCallback,System.Object,System.TimeSpan))
+* [UseHttps(this ListenOptions listenOptions, TlsHandshakeCallbackOptions callbackOptions)](xref:Microsoft.AspNetCore.Hosting.ListenOptionsHttpsExtensions.UseHttps(Microsoft.AspNetCore.Server.Kestrel.Core.ListenOptions,Microsoft.AspNetCore.Server.Kestrel.Https.TlsHandshakeCallbackOptions))
 
 ## HTTP/3 benefits
 

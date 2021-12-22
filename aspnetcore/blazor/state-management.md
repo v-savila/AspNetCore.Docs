@@ -5,7 +5,7 @@ description: Learn how to persist state in Blazor Server apps.
 monikerRange: '>= aspnetcore-3.1'
 ms.author: riande
 ms.custom: mvc
-ms.date: 10/29/2020
+ms.date: 11/09/2021
 no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: blazor/state-management
 zone_pivot_groups: blazor-hosting-models
@@ -384,7 +384,7 @@ else
     private bool isLoaded;
 
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 
     public int CurrentCount { get; set; }
 
@@ -402,7 +402,7 @@ else
 }
 ```
 
-The `CounterStateProvider` component handles the loading phase by not rendering its child content until loading is complete.
+The `CounterStateProvider` component handles the loading phase by not rendering its child content until state loading is complete.
 
 To use the `CounterStateProvider` component, wrap an instance of the component around any other component that requires access to the counter state. To make the state accessible to all components in an app, wrap the `CounterStateProvider` component around the <xref:Microsoft.AspNetCore.Components.Routing.Router> in the `App` component (`App.razor`):
 
@@ -419,17 +419,20 @@ Wrapped components receive and can modify the persisted counter state. The follo
 ```razor
 @page "/counter"
 
-<p>Current count: <strong>@CounterStateProvider.CurrentCount</strong></p>
+<p>Current count: <strong>@CounterStateProvider?.CurrentCount</strong></p>
 <button @onclick="IncrementCount">Increment</button>
 
 @code {
     [CascadingParameter]
-    private CounterStateProvider CounterStateProvider { get; set; }
+    private CounterStateProvider? CounterStateProvider { get; set; }
 
     private async Task IncrementCount()
     {
-        CounterStateProvider.CurrentCount++;
-        await CounterStateProvider.SaveChangesAsync();
+        if (CounterStateProvider is not null)
+        {
+            CounterStateProvider.CurrentCount++;
+            await CounterStateProvider.SaveChangesAsync();
+        }
     }
 }
 ```
@@ -837,7 +840,7 @@ else
 }
 ```
 
-The `CounterStateProvider` component handles the loading phase by not rendering its child content until loading is complete.
+The `CounterStateProvider` component handles the loading phase by not rendering its child content until state loading is complete.
 
 To use the `CounterStateProvider` component, wrap an instance of the component around any other component that requires access to the counter state. To make the state accessible to all components in an app, wrap the `CounterStateProvider` component around the <xref:Microsoft.AspNetCore.Components.Routing.Router> in the `App` component (`App.razor`):
 
@@ -1288,7 +1291,7 @@ else
 }
 ```
 
-The `CounterStateProvider` component handles the loading phase by not rendering its child content until loading is complete.
+The `CounterStateProvider` component handles the loading phase by not rendering its child content until state loading is complete.
 
 To use the `CounterStateProvider` component, wrap an instance of the component around any other component that requires access to the counter state. To make the state accessible to all components in an app, wrap the `CounterStateProvider` component around the <xref:Microsoft.AspNetCore.Components.Routing.Router> in the `App` component (`App.razor`):
 

@@ -5,7 +5,7 @@ description: Learn how to configure Blazor startup.
 monikerRange: '>= aspnetcore-3.1'
 ms.author: riande
 ms.custom: mvc
-ms.date: 05/14/2021
+ms.date: 11/09/2021
 no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: blazor/fundamentals/startup
 ---
@@ -137,16 +137,56 @@ The `loadBootResource` function can also return:
 * `null`/`undefined`, which results in the default loading behavior.
 * A [`Response` promise](https://developer.mozilla.org/docs/Web/API/Response). For an example, see <xref:blazor/host-and-deploy/webassembly#compression>.
 
+## Control headers in C# code
+
+Control headers at startup in C# code using the following approaches.
+
+In the following examples, a [Content Security Policy (CSP)](https://developer.mozilla.org/docs/Web/HTTP/Headers/Content-Security-Policy) is applied to the app via a CSP header. The `{POLICY STRING}` placeholder is the CSP policy string.
+
+* In Blazor Server and prerendered Blazor WebAssembly apps, use [ASP.NET Core Middleware](xref:fundamentals/middleware/index) to control the headers collection.
+
+  In `Program.cs`:
+
+  ```csharp
+  app.Use(async (context, next) =>
+  {
+      context.Response.Headers.Add("Content-Security-Policy", "{POLICY STRING}");
+      await next();
+  });
+  ```
+
+  The preceding example uses inline middleware, but you can also create a custom middleware class and call the middleware with an extension method in `Program.cs`. For more information, see <xref:fundamentals/middleware/write>.
+
+* In hosted Blazor WebAssembly apps that aren't prerendered, pass <xref:Microsoft.AspNetCore.Builder.StaticFileOptions> to <xref:Microsoft.AspNetCore.Builder.StaticFilesEndpointRouteBuilderExtensions.MapFallbackToFile%2A> that specifies response headers at the <xref:Microsoft.AspNetCore.Builder.StaticFileOptions.OnPrepareResponse> stage.
+
+  In `Program.cs` of the **`Server`** project:
+
+  ```csharp
+  var staticFileOptions = new StaticFileOptions
+  {
+      OnPrepareResponse = context =>
+      {
+          context.Context.Response.Headers.Add("Content-Security-Policy", 
+              "{POLICY STRING}");
+      }
+  };
+
+  ...
+
+  app.MapFallbackToFile("index.html", staticFileOptions);
+  ```
+
+For more information on CSPs, see <xref:blazor/security/content-security-policy>.
+
 ## Additional resources
 
 * [Environments: Set the app's environment](xref:blazor/fundamentals/environments)
 * SignalR
-  * [Blazor startup](xref:blazor/fundamentals/signalr#blazor-startup)
-  * [Configure SignalR client logging](xref:blazor/fundamentals/signalr#configure-signalr-client-logging)
-  * [Modify the reconnection handler](xref:blazor/fundamentals/signalr#modify-the-reconnection-handler)
-  * [Adjust the reconnection retry count and interval](xref:blazor/fundamentals/signalr#adjust-the-reconnection-retry-count-and-interval)
-  * [Hide or replace the reconnection display](xref:blazor/fundamentals/signalr#hide-or-replace-the-reconnection-display)
-  * [Disconnect the Blazor circuit from the client](xref:blazor/fundamentals/signalr#disconnect-the-blazor-circuit-from-the-client)
+  * [Blazor startup](xref:blazor/fundamentals/signalr#blazor-startup-blazor-server)
+  * [Configure SignalR client logging](xref:blazor/fundamentals/signalr#configure-signalr-client-logging-blazor-server)
+  * [Modify the reconnection handler](xref:blazor/fundamentals/signalr#modify-the-reconnection-handler-blazor-server)
+  * [Adjust the reconnection retry count and interval](xref:blazor/fundamentals/signalr#adjust-the-reconnection-retry-count-and-interval-blazor-server)
+  * [Disconnect the Blazor circuit from the client](xref:blazor/fundamentals/signalr#disconnect-the-blazor-circuit-from-the-client-blazor-server)
 * [Globalization and localization: Statically set the culture with `Blazor.start` (*Blazor WebAssembly only*)](xref:blazor/globalization-localization?pivots=webassembly#statically-set-the-culture)
 * [JS interop: Inject a script after Blazor starts](xref:blazor/js-interop/index#inject-a-script-after-blazor-starts)
 * [Host and deploy: Blazor WebAssembly: Compression](xref:blazor/host-and-deploy/webassembly#compression)
@@ -275,16 +315,56 @@ The `loadBootResource` function can also return:
 * `null`/`undefined`, which results in the default loading behavior.
 * A [`Response` promise](https://developer.mozilla.org/docs/Web/API/Response). For an example, see <xref:blazor/host-and-deploy/webassembly#compression>.
 
+## Control headers in C# code
+
+Control headers at startup in C# code using the following approaches.
+
+In the following examples, a [Content Security Policy (CSP)](https://developer.mozilla.org/docs/Web/HTTP/Headers/Content-Security-Policy) is applied to the app via a CSP header. The `{POLICY STRING}` placeholder is the CSP policy string.
+
+* In Blazor Server and prerendered Blazor WebAssembly apps, use [ASP.NET Core Middleware](xref:fundamentals/middleware/index) to control the headers collection.
+
+  In `Startup.Configure` of `Startup.cs`:
+
+  ```csharp
+  app.Use(async (context, next) =>
+  {
+      context.Response.Headers.Add("Content-Security-Policy", "{POLICY STRING}");
+      await next();
+  });
+  ```
+
+  The preceding example uses inline middleware, but you can also create a custom middleware class and call the middleware with an extension method in `Startup.Configure`. For more information, see <xref:fundamentals/middleware/write>.
+
+* In hosted Blazor WebAssembly apps that aren't prerendered, pass <xref:Microsoft.AspNetCore.Builder.StaticFileOptions> to <xref:Microsoft.AspNetCore.Builder.StaticFilesEndpointRouteBuilderExtensions.MapFallbackToFile%2A> that specifies response headers at the <xref:Microsoft.AspNetCore.Builder.StaticFileOptions.OnPrepareResponse> stage.
+
+  In `Startup.Configure` (`Startup.cs`) of the **`Server`** project:
+
+  ```csharp
+  var staticFileOptions = new StaticFileOptions
+  {
+      OnPrepareResponse = context =>
+      {
+          context.Context.Response.Headers.Add("Content-Security-Policy", 
+              "{POLICY STRING}");
+      }
+  };
+
+  ...
+
+  app.MapFallbackToFile("index.html", staticFileOptions);
+  ```
+
+For more information on CSPs, see <xref:blazor/security/content-security-policy>.
+
 ## Additional resources
 
 * [Environments: Set the app's environment](xref:blazor/fundamentals/environments)
 * SignalR
-  * [Blazor startup](xref:blazor/fundamentals/signalr#blazor-startup)
-  * [Configure SignalR client logging](xref:blazor/fundamentals/signalr#configure-signalr-client-logging)
-  * [Modify the reconnection handler](xref:blazor/fundamentals/signalr#modify-the-reconnection-handler)
-  * [Adjust the reconnection retry count and interval](xref:blazor/fundamentals/signalr#adjust-the-reconnection-retry-count-and-interval)
-  * [Hide or replace the reconnection display](xref:blazor/fundamentals/signalr#hide-or-replace-the-reconnection-display)
-  * [Disconnect the Blazor circuit from the client](xref:blazor/fundamentals/signalr#disconnect-the-blazor-circuit-from-the-client)
+  * [Blazor startup](xref:blazor/fundamentals/signalr#blazor-startup-blazor-server)
+  * [Configure SignalR client logging](xref:blazor/fundamentals/signalr#configure-signalr-client-logging-blazor-server)
+  * [Modify the reconnection handler](xref:blazor/fundamentals/signalr#modify-the-reconnection-handler-blazor-server)
+  * [Adjust the reconnection retry count and interval](xref:blazor/fundamentals/signalr#adjust-the-reconnection-retry-count-and-interval-blazor-server)
+  * [Disconnect the Blazor circuit from the client](xref:blazor/fundamentals/signalr#disconnect-the-blazor-circuit-from-the-client-blazor-server)
 * [Globalization and localization: Statically set the culture with `Blazor.start` (*Blazor WebAssembly only*)](xref:blazor/globalization-localization?pivots=webassembly#statically-set-the-culture)
 * [JS interop: Inject a script after Blazor starts](xref:blazor/js-interop/index#inject-a-script-after-blazor-starts)
 * [Host and deploy: Blazor WebAssembly: Compression](xref:blazor/host-and-deploy/webassembly#compression)
@@ -413,14 +493,54 @@ The `loadBootResource` function can also return:
 * `null`/`undefined`, which results in the default loading behavior.
 * A [`Response` promise](https://developer.mozilla.org/docs/Web/API/Response). For an example, see <xref:blazor/host-and-deploy/webassembly#compression>.
 
+## Control headers in C# code
+
+Control headers at startup in C# code using the following approaches.
+
+In the following examples, a [Content Security Policy (CSP)](https://developer.mozilla.org/docs/Web/HTTP/Headers/Content-Security-Policy) is applied to the app via a CSP header. The `{POLICY STRING}` placeholder is the CSP policy string.
+
+* In Blazor Server, use [ASP.NET Core Middleware](xref:fundamentals/middleware/index) to control the headers collection.
+
+  In `Startup.Configure` of `Startup.cs`:
+
+  ```csharp
+  app.Use(async (context, next) =>
+  {
+      context.Response.Headers.Add("Content-Security-Policy", "{POLICY STRING}");
+      await next();
+  });
+  ```
+
+  The preceding example uses inline middleware, but you can also create a custom middleware class and call the middleware with an extension method in `Program.cs`. For more information, see <xref:fundamentals/middleware/write>.
+
+* In hosted Blazor WebAssembly apps, pass <xref:Microsoft.AspNetCore.Builder.StaticFileOptions> to <xref:Microsoft.AspNetCore.Builder.StaticFilesEndpointRouteBuilderExtensions.MapFallbackToFile%2A> that specifies response headers at the <xref:Microsoft.AspNetCore.Builder.StaticFileOptions.OnPrepareResponse> stage.
+
+  In `Startup.Configure` (`Startup.cs`) of the **`Server`** project:
+
+  ```csharp
+  var staticFileOptions = new StaticFileOptions
+  {
+      OnPrepareResponse = context =>
+      {
+          context.Context.Response.Headers.Add("Content-Security-Policy", 
+              "{POLICY STRING}");
+      }
+  };
+
+  ...
+
+  app.MapFallbackToFile("index.html", staticFileOptions);
+  ```
+
+For more information on CSPs, see <xref:blazor/security/content-security-policy>.
+
 ## Additional resources
 
 * SignalR
-  * [Blazor startup](xref:blazor/fundamentals/signalr#blazor-startup)
-  * [Configure SignalR client logging](xref:blazor/fundamentals/signalr#configure-signalr-client-logging)
-  * [Modify the reconnection handler](xref:blazor/fundamentals/signalr#modify-the-reconnection-handler)
-  * [Adjust the reconnection retry count and interval](xref:blazor/fundamentals/signalr#adjust-the-reconnection-retry-count-and-interval)
-  * [Hide or replace the reconnection display](xref:blazor/fundamentals/signalr#hide-or-replace-the-reconnection-display)
+  * [Blazor startup](xref:blazor/fundamentals/signalr#blazor-startup-blazor-server)
+  * [Configure SignalR client logging](xref:blazor/fundamentals/signalr#configure-signalr-client-logging-blazor-server)
+  * [Modify the reconnection handler](xref:blazor/fundamentals/signalr#modify-the-reconnection-handler-blazor-server)
+  * [Adjust the reconnection retry count and interval](xref:blazor/fundamentals/signalr#adjust-the-reconnection-retry-count-and-interval-blazor-server)
 * [JS interop: Inject a script after Blazor starts](xref:blazor/js-interop/index#inject-a-script-after-blazor-starts)
 * [Host and deploy: Blazor WebAssembly: Compression](xref:blazor/host-and-deploy/webassembly#compression)
 

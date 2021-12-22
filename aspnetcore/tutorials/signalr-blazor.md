@@ -5,7 +5,7 @@ description: Create a chat app that uses ASP.NET Core SignalR with Blazor.
 monikerRange: '>= aspnetcore-3.1'
 ms.author: riande
 ms.custom: mvc
-ms.date: 01/25/2021
+ms.date: 11/09/2021
 no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: tutorials/signalr-blazor
 zone_pivot_groups: blazor-hosting-models
@@ -40,7 +40,7 @@ At the end of this tutorial, you'll have a working chat app.
 
 # [Visual Studio for Mac](#tab/visual-studio-mac)
 
-* [Visual Studio for Mac 2022 or later](https://visualstudio.microsoft.com/vs/mac/)
+* [Visual Studio for Mac 2022 or later](https://visualstudio.microsoft.com/vs/mac/): Select the *Preview* channel from within Visual Studio. For more information, see [Install a preview version of Visual Studio for Mac](/visualstudio/mac/install-preview).
 * [!INCLUDE [.NET Core 6.0 SDK](~/includes/6.0-SDK.md)]
 
 # [.NET Core CLI](#tab/netcore-cli/)
@@ -91,7 +91,9 @@ To configure Visual Studio Code assets in the `.vscode` folder for debugging, se
 
 # [Visual Studio for Mac](#tab/visual-studio-mac)
 
-1. Install the latest version of [Visual Studio for Mac](https://visualstudio.microsoft.com/vs/mac/) and perform the following steps:
+1. Install the latest version of [Visual Studio for Mac](https://visualstudio.microsoft.com/vs/mac/) and perform the following steps.
+
+   Select the *Preview* channel from within Visual Studio. For more information, see [Install a preview version of Visual Studio for Mac](/visualstudio/mac/install-preview).
 
 1. Select **File** > **New Solution** or create a **New** project from the **Start Window**.
 
@@ -212,7 +214,7 @@ Follow the guidance for your tooling:
 
 # [Visual Studio](#tab/visual-studio)
 
-1. In **Solution Explorer**, select the `BlazorWebAssemblySignalRApp.Server` project. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> to run the app without debugging.
+1. In **Solution Explorer**, select the `BlazorWebAssemblySignalRApp.Server` project. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows)/<kbd>⌘</kbd>+<kbd>F5</kbd> (macOS) to run the app without debugging.
 
 1. Copy the URL from the address bar, open another browser instance or tab, and paste the URL in the address bar.
 
@@ -226,7 +228,7 @@ Follow the guidance for your tooling:
 
 For information on configuring VS Code assets in the `.vscode` folder, see the **Linux** operating system guidance in <xref:blazor/tooling>.
 
-1. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> to run the app without debugging.
+1. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows)/<kbd>⌘</kbd>+<kbd>F5</kbd> (macOS) to run the app without debugging.
 
 1. Copy the URL from the address bar, open another browser instance or tab, and paste the URL in the address bar.
 
@@ -424,7 +426,7 @@ Follow the guidance for your tooling:
 
 # [Visual Studio](#tab/visual-studio)
 
-1. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> to run the app without debugging.
+1. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows)/<kbd>⌘</kbd>+<kbd>F5</kbd> (macOS) to run the app without debugging.
 
 1. Copy the URL from the address bar, open another browser instance or tab, and paste the URL in the address bar.
 
@@ -436,7 +438,7 @@ Follow the guidance for your tooling:
 
 # [Visual Studio Code](#tab/visual-studio-code)
 
-1. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> to run the app without debugging.
+1. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows)/<kbd>⌘</kbd>+<kbd>F5</kbd> (macOS) to run the app without debugging.
 
 1. Copy the URL from the address bar, open another browser instance or tab, and paste the URL in the address bar.
 
@@ -498,7 +500,8 @@ To learn more about building Blazor apps, see the Blazor documentation:
 ## Additional resources
 
 * <xref:signalr/introduction>
-* [SignalR cross-origin negotiation for authentication](xref:blazor/fundamentals/signalr#signalr-cross-origin-negotiation-for-authentication)
+* [SignalR cross-origin negotiation for authentication](xref:blazor/fundamentals/signalr#signalr-cross-origin-negotiation-for-authentication-blazor-webassembly)
+* [SignalR configuration](xref:blazor/host-and-deploy/server#signalr-configuration)
 * <xref:blazor/debug>
 * <xref:blazor/security/server/threat-mitigation>
 
@@ -704,7 +707,7 @@ Follow the guidance for your tooling:
 
 # [Visual Studio](#tab/visual-studio)
 
-1. In **Solution Explorer**, select the `BlazorWebAssemblySignalRApp.Server` project. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> to run the app without debugging.
+1. In **Solution Explorer**, select the `BlazorWebAssemblySignalRApp.Server` project. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows)/<kbd>⌘</kbd>+<kbd>F5</kbd> (macOS) to run the app without debugging.
 
 1. Copy the URL from the address bar, open another browser instance or tab, and paste the URL in the address bar.
 
@@ -718,7 +721,7 @@ Follow the guidance for your tooling:
 
 For information on configuring VS Code assets in the `.vscode` folder, see the **Linux** operating system guidance in <xref:blazor/tooling>.
 
-1. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> to run the app without debugging.
+1. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows)/<kbd>⌘</kbd>+<kbd>F5</kbd> (macOS) to run the app without debugging.
 
 1. Copy the URL from the address bar, open another browser instance or tab, and paste the URL in the address bar.
 
@@ -916,7 +919,7 @@ Follow the guidance for your tooling:
 
 # [Visual Studio](#tab/visual-studio)
 
-1. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> to run the app without debugging.
+1. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows)/<kbd>⌘</kbd>+<kbd>F5</kbd> (macOS) to run the app without debugging.
 
 1. Copy the URL from the address bar, open another browser instance or tab, and paste the URL in the address bar.
 
@@ -928,7 +931,7 @@ Follow the guidance for your tooling:
 
 # [Visual Studio Code](#tab/visual-studio-code)
 
-1. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> to run the app without debugging.
+1. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows)/<kbd>⌘</kbd>+<kbd>F5</kbd> (macOS) to run the app without debugging.
 
 1. Copy the URL from the address bar, open another browser instance or tab, and paste the URL in the address bar.
 
@@ -990,7 +993,8 @@ To learn more about building Blazor apps, see the Blazor documentation:
 ## Additional resources
 
 * <xref:signalr/introduction>
-* [SignalR cross-origin negotiation for authentication](xref:blazor/fundamentals/signalr#signalr-cross-origin-negotiation-for-authentication)
+* [SignalR cross-origin negotiation for authentication](xref:blazor/fundamentals/signalr#signalr-cross-origin-negotiation-for-authentication-blazor-webassembly)
+* [SignalR configuration](xref:blazor/host-and-deploy/server#signalr-configuration)
 * <xref:blazor/debug>
 * <xref:blazor/security/server/threat-mitigation>
 
@@ -1196,7 +1200,7 @@ Follow the guidance for your tooling:
 
 # [Visual Studio](#tab/visual-studio)
 
-1. In **Solution Explorer**, select the `BlazorWebAssemblySignalRApp.Server` project. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> to run the app without debugging.
+1. In **Solution Explorer**, select the `BlazorWebAssemblySignalRApp.Server` project. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows)/<kbd>⌘</kbd>+<kbd>F5</kbd> (macOS) to run the app without debugging.
 
 1. Copy the URL from the address bar, open another browser instance or tab, and paste the URL in the address bar.
 
@@ -1210,7 +1214,7 @@ Follow the guidance for your tooling:
 
 For information on configuring VS Code assets in the `.vscode` folder, see the **Linux** operating system guidance in <xref:blazor/tooling>.
 
-1. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> to run the app without debugging.
+1. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows)/<kbd>⌘</kbd>+<kbd>F5</kbd> (macOS) to run the app without debugging.
 
 1. Copy the URL from the address bar, open another browser instance or tab, and paste the URL in the address bar.
 
@@ -1464,7 +1468,7 @@ Follow the guidance for your tooling:
 
 # [Visual Studio](#tab/visual-studio)
 
-1. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> to run the app without debugging.
+1. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows)/<kbd>⌘</kbd>+<kbd>F5</kbd> (macOS) to run the app without debugging.
 
 1. Copy the URL from the address bar, open another browser instance or tab, and paste the URL in the address bar.
 
@@ -1476,7 +1480,7 @@ Follow the guidance for your tooling:
 
 # [Visual Studio Code](#tab/visual-studio-code)
 
-1. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> to run the app without debugging.
+1. Press <kbd>F5</kbd> to run the app with debugging or <kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows)/<kbd>⌘</kbd>+<kbd>F5</kbd> (macOS) to run the app without debugging.
 
 1. Copy the URL from the address bar, open another browser instance or tab, and paste the URL in the address bar.
 
@@ -1538,7 +1542,8 @@ To learn more about building Blazor apps, see the Blazor documentation:
 ## Additional resources
 
 * <xref:signalr/introduction>
-* [SignalR cross-origin negotiation for authentication](xref:blazor/fundamentals/signalr#signalr-cross-origin-negotiation-for-authentication)
+* [SignalR cross-origin negotiation for authentication](xref:blazor/fundamentals/signalr#signalr-cross-origin-negotiation-for-authentication-blazor-webassembly)
+* [SignalR configuration](xref:blazor/host-and-deploy/server#signalr-configuration)
 * <xref:blazor/debug>
 * <xref:blazor/security/server/threat-mitigation>
 

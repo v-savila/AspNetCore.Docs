@@ -5,7 +5,7 @@ description: Discover how to lazy load assemblies in ASP.NET Core Blazor WebAsse
 monikerRange: '>= aspnetcore-5.0'
 ms.author: riande
 ms.custom: mvc
-ms.date: 07/13/2021
+ms.date: 11/09/2021
 no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: blazor/webassembly-lazy-load-assemblies
 ---
@@ -195,13 +195,9 @@ The demonstration in this section:
    * Visual Studio: **Create a solution** > **Create a new project** > **Razor Class Library**. Name the project `GrantImaharaRobotControls`.
    * Visual Studio Code/.NET CLI: Execute `dotnet new razorclasslib -o GrantImaharaRobotControls` from a command prompt. The `-o|--output` option creates a folder for the solution and names the project `GrantImaharaRobotControls`.
 
-1. The example component presented later in this section uses a [Blazor form](xref:blazor/forms-validation). Add a package reference to the RCL project for [`Microsoft.AspNetCore.Components.Forms`](https://www.nuget.org/packages/Microsoft.AspNetCore.Components.Forms):
+1. The example component presented later in this section uses a [Blazor form](xref:blazor/forms-validation). In the RCL project, add the [`Microsoft.AspNetCore.Components.Forms`](https://www.nuget.org/packages/Microsoft.AspNetCore.Components.Forms) package to the project.
 
-   ```xml
-   <PackageReference Include="Microsoft.AspNetCore.Components.Forms" Version="{VERSION}" />
-   ```
-
-   The `{VERSION}` placeholder is the version of the package.
+   [!INCLUDE[](~/includes/package-reference.md)]
 
 1. Create a `HandGesture` class in the RCL with a `ThumbUp` method that hypothetically makes a robot perform a thumbs-up gesture. The method accepts an argument for the axis, `Left` or `Right`, as an [`enum`](/dotnet/csharp/language-reference/builtin-types/enum). The method returns `true` on success.
 
@@ -259,7 +255,7 @@ The demonstration in this section:
 
    @code {
        private RobotModel robotModel = new() { AxisSelection = Axis.Left };
-       private string message;
+       private string? message;
 
        private void HandleValidSubmit()
        {
@@ -567,13 +563,9 @@ The demonstration in this section:
    * Visual Studio: **Create a solution** > **Create a new project** > **Razor Class Library**. Name the project `GrantImaharaRobotControls`.
    * Visual Studio Code/.NET CLI: Execute `dotnet new razorclasslib -o GrantImaharaRobotControls` from a command prompt. The `-o|--output` option creates a folder for the solution and names the project `GrantImaharaRobotControls`.
 
-1. The example component presented later in this section uses a [Blazor form](xref:blazor/forms-validation). Add a package reference to the RCL project for [`Microsoft.AspNetCore.Components.Forms`](https://www.nuget.org/packages/Microsoft.AspNetCore.Components.Forms):
+1. The example component presented later in this section uses a [Blazor form](xref:blazor/forms-validation). In the RCL project, add the [`Microsoft.AspNetCore.Components.Forms`](https://www.nuget.org/packages/Microsoft.AspNetCore.Components.Forms) package to the project.
 
-   ```xml
-   <PackageReference Include="Microsoft.AspNetCore.Components.Forms" Version="{VERSION}" />
-   ```
-
-   The `{VERSION}` placeholder is the version of the package.
+   [!INCLUDE[](~/includes/package-reference.md)]
 
 1. Create a `HandGesture` class in the RCL with a `ThumbUp` method that hypothetically makes a robot perform a thumbs-up gesture. The method accepts an argument for the axis, `Left` or `Right`, as an [`enum`](/dotnet/csharp/language-reference/builtin-types/enum). The method returns `true` on success.
 

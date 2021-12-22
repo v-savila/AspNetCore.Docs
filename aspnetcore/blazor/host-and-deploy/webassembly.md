@@ -5,7 +5,7 @@ description: Learn how to host and deploy a Blazor app using ASP.NET Core, Conte
 monikerRange: '>= aspnetcore-3.1'
 ms.author: riande
 ms.custom: mvc
-ms.date: 01/12/2021
+ms.date: 11/09/2021
 no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: blazor/host-and-deploy/webassembly
 ---
@@ -27,7 +27,9 @@ The following deployment strategies are supported:
 
 Blazor WebAssembly supports [ahead-of-time (AOT) compilation](/dotnet/standard/glossary#aot), where you can compile your .NET code directly into WebAssembly. AOT compilation results in runtime performance improvements at the expense of a larger app size.
 
-Without enabling AOT compilation, Blazor WebAssembly apps run on the browser using a .NET Intermediate Language (IL) interpreter implemented in WebAssembly. Because the .NET code is interpreted, apps typically run slower than they would on a server-side [.NET just-in-time (JIT) runtime](/dotnet/standard/glossary#jit). AOT compilation addresses this performance issue by compiling an app's .NET code directly into WebAssembly for native WebAssembly execution by the browser. The AOT performance improvement can yield dramatic improvements for apps that execute CPU intensive tasks. The drawback to using AOT compilation is that AOT-compiled apps are generally larger than their IL-interpreted counterparts, so they usually take longer to download to the client when first requested.
+Without enabling AOT compilation, Blazor WebAssembly apps run on the browser using a .NET Intermediate Language (IL) interpreter implemented in WebAssembly. Because the .NET code is interpreted, apps typically run slower than they would on a server-side [.NET just-in-time (JIT) runtime](/dotnet/standard/glossary#jit). AOT compilation addresses this performance issue by compiling an app's .NET code directly into WebAssembly for native WebAssembly execution by the browser. The AOT performance improvement can yield dramatic improvements for apps that execute CPU-intensive tasks. The drawback to using AOT compilation is that AOT-compiled apps are generally larger than their IL-interpreted counterparts, so they usually take longer to download to the client when first requested.
+
+For guidance on installing the .NET WebAssembly build tools, see <xref:blazor/tooling#net-webassembly-build-tools>.
 
 To enable WebAssembly AOT compilation, add the `<RunAOTCompilation>` property set to `true` to the Blazor WebAssembly app's project file:
 
@@ -51,7 +53,9 @@ The size of an AOT-compiled Blazor WebAssembly app is generally larger than the 
 
 One of the largest parts of a Blazor WebAssembly app is the WebAssembly-based .NET runtime (`dotnet.wasm`) that the browser must download when the app is first accessed by a user's browser. Relinking the .NET WebAssembly runtime trims unused runtime code and thus improves download speed.
 
-Runtime relinking is performed automatically when you publish an app. The size reduction is particularly dramatic when disabling globalization. For more information, see <xref:blazor/globalization-localization>.
+Runtime relinking requires installation of the .NET WebAssembly build tools. For more information, see <xref:blazor/tooling#net-webassembly-build-tools>.
+
+With the .NET WebAssembly build tools installed, runtime relinking is performed automatically when an app is published. The size reduction is particularly dramatic when disabling globalization. For more information, see <xref:blazor/globalization-localization#invariant-globalization>.
 
 ## Customize how boot resources are loaded
 
@@ -175,7 +179,7 @@ In the following example:
 
 Use an existing hosted Blazor solution or create a new solution from the Blazor Hosted project template:
 
-* In the client app's project file, add a `<StaticWebAssetBasePath>` property to the `<PropertyGroup>` with a value of `FirstApp` to set the base path for the project's static assets:
+* In the client app's project file, add a [`<StaticWebAssetBasePath>` property](xref:blazor/fundamentals/static-files#static-web-asset-base-path) to the `<PropertyGroup>` with a value of `FirstApp` to set the base path for the project's static assets:
 
   ```xml
   <PropertyGroup>
@@ -239,15 +243,15 @@ Use an existing hosted Blazor solution or create a new solution from the Blazor 
 
 * In the server app's `Program.cs` file, remove the following lines, which appear after the call to <xref:Microsoft.AspNetCore.Builder.HttpsPolicyBuilderExtensions.UseHttpsRedirection%2A>:
 
-  ```csharp
-  app.UseBlazorFrameworkFiles();
-  app.UseStaticFiles();
+  ```diff
+  -app.UseBlazorFrameworkFiles();
+  -app.UseStaticFiles();
 
-  app.UseRouting();
+  -app.UseRouting();
 
-  app.MapRazorPages();
-  app.MapControllers();
-  app.MapFallbackToFile("index.html");
+  -app.MapRazorPages();
+  -app.MapControllers();
+  -app.MapFallbackToFile("index.html");
   ```
 
   Add middleware that maps requests to the client apps. The following example configures the middleware to run when:
@@ -311,6 +315,15 @@ Use an existing hosted Blazor solution or create a new solution from the Blazor 
   });
   ```
 
+  For more information on <xref:Microsoft.AspNetCore.Builder.StaticFileExtensions.UseStaticFiles%2A>, see <xref:blazor/fundamentals/static-files#static-file-middleware>.
+
+  For more information on `UseBlazorFrameworkFiles` and `MapFallbackToFile`, see the following resources:
+
+  * <xref:Microsoft.AspNetCore.Builder.ComponentsWebAssemblyApplicationBuilderExtensions.UseBlazorFrameworkFiles%2A?displayProperty=fullName> ([reference source](https://github.com/dotnet/aspnetcore/blob/main/src/Components/WebAssembly/Server/src/ComponentsWebAssemblyApplicationBuilderExtensions.cs))
+  * <xref:Microsoft.AspNetCore.Builder.StaticFilesEndpointRouteBuilderExtensions.MapFallbackToFile%2A?displayProperty=fullName> ([reference source](https://github.com/dotnet/aspnetcore/blob/main/src/Middleware/StaticFiles/src/StaticFilesEndpointRouteBuilderExtensions.cs))
+
+  [!INCLUDE[](~/includes/aspnetcore-repo-ref-source-links.md)]
+
 * In the server app's weather forecast controller (`Controllers/WeatherForecastController.cs`), replace the existing route (`[Route("[controller]")]`) to `WeatherForecastController` with the following routes:
 
   ```csharp
@@ -371,12 +384,7 @@ Published assets are created in the `/bin/Release/{TARGET FRAMEWORK}/publish` fo
 
 When a Blazor project is published, a `web.config` file is created with the following IIS configuration:
 
-* MIME types are set for the following file extensions:
-  * `.dll`: `application/octet-stream`
-  * `.json`: `application/json`
-  * `.wasm`: `application/wasm`
-  * `.woff`: `application/font-woff`
-  * `.woff2`: `application/font-woff`
+* MIME types
 * HTTP compression is enabled for the following MIME types:
   * `application/octet-stream`
   * `application/wasm`
@@ -384,15 +392,12 @@ When a Blazor project is published, a `web.config` file is created with the foll
   * Serve the sub-directory where the app's static assets reside (`wwwroot/{PATH REQUESTED}`).
   * Create SPA fallback routing so that requests for non-file assets are redirected to the app's default document in its static assets folder (`wwwroot/index.html`).
   
-#### Use a custom web.config
+#### Use a custom `web.config`
 
-To use a custom `web.config` file, place the custom `web.config` file at the root of the project folder. Configure the project to publish IIS-specific assets using `PublishIISAssets` in the app's project file and publish the project:
+To use a custom `web.config` file:
 
-```xml
-<PropertyGroup>
-  <PublishIISAssets>true</PublishIISAssets>
-</PropertyGroup>
-```
+1. Place the custom `web.config` file in the project's root folder. For a hosted Blazor WebAssembly solution, place the file in the **`Server`** project's folder.
+1. Publish the project. For a hosted Blazor WebAssembly solution, publish the solution from the **`Server`** project. For more information, see <xref:blazor/host-and-deploy/index>.
 
 #### Install the URL Rewrite Module
 
@@ -414,7 +419,7 @@ If a standalone app is hosted as an IIS sub-app, perform either of the following
 
 * Disable the inherited ASP.NET Core Module handler.
 
-  Remove the handler in the Blazor app's published `web.config` file by adding a `<handlers>` section to the file:
+  Remove the handler in the Blazor app's published `web.config` file by adding a `<handlers>` section to the `<system.webServer>` section of the file:
 
   ```xml
   <handlers>
@@ -437,6 +442,9 @@ If a standalone app is hosted as an IIS sub-app, perform either of the following
     </location>
   </configuration>
   ```
+  
+  > [!NOTE]
+  > Disabling inheritance of the root (parent) app's `<system.webServer>` section is the default configuration for published apps using the .NET SDK.
 
 Removing the handler or disabling inheritance is performed in addition to [configuring the app's base path](xref:blazor/host-and-deploy/index#app-base-path). Set the app base path in the app's `index.html` file to the IIS alias used when configuring the sub-app in IIS.
 
@@ -726,6 +734,17 @@ In the project file, the script is run after publishing the app:
 > [!NOTE]
 > When renaming and lazy loading the same assemblies, see the guidance in <xref:blazor/webassembly-lazy-load-assemblies#onnavigateasync-events-and-renamed-assembly-files>.
 
+## Prior deployment corruption
+
+Typically on deployment:
+
+* Only the files that have changed are replaced, which usually results in a faster deployment.
+* Existing files that aren't part of the new deployment are left in place for use by the new deployment.
+
+In rare cases, lingering files from a prior deployment can corrupt a new deployment. Completely deleting the existing deployment (or locally-published app prior to deployment) may resolve the issue with a corrupted deployment. Often, deleting the existing deployment ***once*** is sufficient to resolve the problem, including for a DevOps build and deploy pipeline.
+
+If you determine that clearing a prior deployment is always required when a DevOps build and deploy pipeline is in use, you can temporarily add a step to the build pipeline to delete the prior deployment for each new deployment until you troubleshoot the exact cause of the corruption.
+
 ## Resolve integrity check failures
 
 When Blazor WebAssembly downloads an app's startup files, it instructs the browser to perform integrity checks on the responses. It uses information in the `blazor.boot.json` file to specify the expected SHA-256 hash values for `.dll`, `.wasm`, and other files. This is beneficial for the following reasons:
@@ -767,7 +786,7 @@ If you confirm that the server is returning plausibly correct data, there must b
 
 ### Troubleshoot integrity PowerShell script
 
-Use the [`integrity.ps1`](https://github.com/dotnet/AspNetCore.Docs/blob/main/aspnetcore/blazor/host-and-deploy/webassembly/_samples/integrity.ps1?raw=true) PowerShell script to validate a published and deployed Blazor app. The script is provided for PowerShell Core 6 as a starting point when the app has integrity issues that the Blazor framework can't identify. Customization of the script might be required for your apps, including if running on version of PowerShell later than version 6.2.7.
+Use the [`integrity.ps1`](https://github.com/dotnet/AspNetCore.Docs/blob/main/aspnetcore/blazor/host-and-deploy/webassembly/_samples/integrity.ps1?raw=true) PowerShell script to validate a published and deployed Blazor app. The script is provided for PowerShell Core 7 or later as a starting point when the app has integrity issues that the Blazor framework can't identify. Customization of the script might be required for your apps, including if running on version of PowerShell later than version 7.2.0.
 
 The script checks the files in the `publish` folder and downloaded from the deployed app to detect issues in the different manifests that contain integrity hashes. These checks should detect the most common problems:
 
@@ -781,9 +800,15 @@ Invoke the script with the following command in a PowerShell command shell:
 .\integrity.ps1 {BASE URL} {PUBLISH OUTPUT FOLDER}
 ```
 
+In the following example, the script is executed on a locally-running app at `https://localhost:5001/`:
+
+```powershell
+.\integrity.ps1 https://localhost:5001/ C:\TestApps\BlazorSample\bin\Release\net6.0\publish\
+```
+
 Placeholders:
 
-* `{BASE URL}`: The URL of the deployed app.
+* `{BASE URL}`: The URL of the deployed app. A trailing slash (`/`) is required.
 * `{PUBLISH OUTPUT FOLDER}`: The path to the app's `publish` folder or location where the app is published for deployment.
 
 > [!NOTE]
@@ -797,8 +822,8 @@ Placeholders:
 >
 > Comparing the checksum of a file to a valid checksum value doesn't guarantee file safety, but modifying a file in a way that maintains a checksum value isn't trivial for malicious users. Therefore, checksums are useful as a general security approach. Compare the checksum of the local `integrity.ps1` file to one of the following values:
 >
-> * SHA256: `6b0dc7aba5d8489136bb2969036432597615b11b4e432535e173ca077a0449c4`
-> * MD5: `f0c800a4c72604bd47f3c19f5f0bb4f4`
+> * SHA256: `32c24cb667d79a701135cb72f6bae490d81703323f61b8af2c7e5e5dc0f0c2bb`
+> * MD5: `9cee7d7ec86ee809a329b5406fbf21a8`
 >
 > Obtain the file's checksum on Windows OS with the following command. Provide the path and file name for the `{PATH AND FILE NAME}` placeholder and indicate the type of checksum to produce for the `{SHA512|MD5}` placeholder, either `SHA256` or `MD5`:
 >
@@ -979,7 +1004,7 @@ In the following example:
 
 Use an existing hosted Blazor solution or create a new solution from the Blazor Hosted project template:
 
-* In the client app's project file, add a `<StaticWebAssetBasePath>` property to the `<PropertyGroup>` with a value of `FirstApp` to set the base path for the project's static assets:
+* In the client app's project file, add a [`<StaticWebAssetBasePath>` property](xref:blazor/fundamentals/static-files#static-web-asset-base-path) to the `<PropertyGroup>` with a value of `FirstApp` to set the base path for the project's static assets:
 
   ```xml
   <PropertyGroup>
@@ -1043,18 +1068,18 @@ Use an existing hosted Blazor solution or create a new solution from the Blazor 
 
 * In the server app's `Startup.Configure` method (`Startup.cs`), remove the following lines, which appear after the call to <xref:Microsoft.AspNetCore.Builder.HttpsPolicyBuilderExtensions.UseHttpsRedirection%2A>:
 
-  ```csharp
-  app.UseBlazorFrameworkFiles();
-  app.UseStaticFiles();
+  ```diff
+  -app.UseBlazorFrameworkFiles();
+  -app.UseStaticFiles();
 
-  app.UseRouting();
+  -app.UseRouting();
 
-  app.UseEndpoints(endpoints =>
-  {
-      endpoints.MapRazorPages();
-      endpoints.MapControllers();
-      endpoints.MapFallbackToFile("index.html");
-  });
+  -app.UseEndpoints(endpoints =>
+  -{
+  -    endpoints.MapRazorPages();
+  -    endpoints.MapControllers();
+  -    endpoints.MapFallbackToFile("index.html");
+  -});
   ```
 
   Add middleware that maps requests to the client apps. The following example configures the middleware to run when:
@@ -1118,6 +1143,15 @@ Use an existing hosted Blazor solution or create a new solution from the Blazor 
   });
   ```
 
+  For more information on <xref:Microsoft.AspNetCore.Builder.StaticFileExtensions.UseStaticFiles%2A>, see <xref:blazor/fundamentals/static-files#static-file-middleware>.
+
+  For more information on `UseBlazorFrameworkFiles` and `MapFallbackToFile`, see the following resources:
+
+  * <xref:Microsoft.AspNetCore.Builder.ComponentsWebAssemblyApplicationBuilderExtensions.UseBlazorFrameworkFiles%2A?displayProperty=fullName> ([reference source](https://github.com/dotnet/aspnetcore/blob/main/src/Components/WebAssembly/Server/src/ComponentsWebAssemblyApplicationBuilderExtensions.cs))
+  * <xref:Microsoft.AspNetCore.Builder.StaticFilesEndpointRouteBuilderExtensions.MapFallbackToFile%2A?displayProperty=fullName> ([reference source](https://github.com/dotnet/aspnetcore/blob/main/src/Middleware/StaticFiles/src/StaticFilesEndpointRouteBuilderExtensions.cs))
+
+  [!INCLUDE[](~/includes/aspnetcore-repo-ref-source-links.md)]
+
 * In the server app's weather forecast controller (`Controllers/WeatherForecastController.cs`), replace the existing route (`[Route("[controller]")]`) to `WeatherForecastController` with the following routes:
 
   ```csharp
@@ -1178,12 +1212,7 @@ Published assets are created in the `/bin/Release/{TARGET FRAMEWORK}/publish` fo
 
 When a Blazor project is published, a `web.config` file is created with the following IIS configuration:
 
-* MIME types are set for the following file extensions:
-  * `.dll`: `application/octet-stream`
-  * `.json`: `application/json`
-  * `.wasm`: `application/wasm`
-  * `.woff`: `application/font-woff`
-  * `.woff2`: `application/font-woff`
+* MIME types
 * HTTP compression is enabled for the following MIME types:
   * `application/octet-stream`
   * `application/wasm`
@@ -1191,15 +1220,20 @@ When a Blazor project is published, a `web.config` file is created with the foll
   * Serve the sub-directory where the app's static assets reside (`wwwroot/{PATH REQUESTED}`).
   * Create SPA fallback routing so that requests for non-file assets are redirected to the app's default document in its static assets folder (`wwwroot/index.html`).
   
-#### Use a custom web.config
+#### Use a custom `web.config`
 
-To use a custom `web.config` file, place the custom `web.config` file at the root of the project folder. Configure the project to publish IIS-specific assets using `PublishIISAssets` in the app's project file and publish the project:
+To use a custom `web.config` file:
 
-```xml
-<PropertyGroup>
-  <PublishIISAssets>true</PublishIISAssets>
-</PropertyGroup>
-```
+1. Place the custom `web.config` file in the project's root folder. For a hosted Blazor WebAssembly solution, place the file in the **`Server`** project's folder.
+1. Set the `<PublishIISAssets>` property to `true` in the project file (`.csproj`). For a hosted Blazor WebAssembly solution, set the property in the **`Server`** project's project file.
+
+   ```xml
+   <PropertyGroup>
+     <PublishIISAssets>true</PublishIISAssets>
+   </PropertyGroup>
+   ```
+
+1. Publish the project. For a hosted Blazor WebAssembly solution, publish the solution from the **`Server`** project. For more information, see <xref:blazor/host-and-deploy/index>.
 
 #### Install the URL Rewrite Module
 
@@ -1221,7 +1255,7 @@ If a standalone app is hosted as an IIS sub-app, perform either of the following
 
 * Disable the inherited ASP.NET Core Module handler.
 
-  Remove the handler in the Blazor app's published `web.config` file by adding a `<handlers>` section to the file:
+  Remove the handler in the Blazor app's published `web.config` file by adding a `<handlers>` section to the `<system.webServer>` section of the file:
 
   ```xml
   <handlers>
@@ -1244,6 +1278,9 @@ If a standalone app is hosted as an IIS sub-app, perform either of the following
     </location>
   </configuration>
   ```
+  
+  > [!NOTE]
+  > Disabling inheritance of the root (parent) app's `<system.webServer>` section is the default configuration for published apps using the .NET SDK.
 
 Removing the handler or disabling inheritance is performed in addition to [configuring the app's base path](xref:blazor/host-and-deploy/index#app-base-path). Set the app base path in the app's `index.html` file to the IIS alias used when configuring the sub-app in IIS.
 
@@ -1533,6 +1570,17 @@ In the project file, the script is run after publishing the app:
 > [!NOTE]
 > When renaming and lazy loading the same assemblies, see the guidance in <xref:blazor/webassembly-lazy-load-assemblies#onnavigateasync-events-and-renamed-assembly-files>.
 
+## Prior deployment corruption
+
+Typically on deployment:
+
+* Only the files that have changed are replaced, which usually results in a faster deployment.
+* Existing files that aren't part of the new deployment are left in place for use by the new deployment.
+
+In rare cases, lingering files from a prior deployment can corrupt a new deployment. Completely deleting the existing deployment (or locally-published app prior to deployment) may resolve the issue with a corrupted deployment. Often, deleting the existing deployment ***once*** is sufficient to resolve the problem, including for a DevOps build and deploy pipeline.
+
+If you determine that clearing a prior deployment is always required when a DevOps build and deploy pipeline is in use, you can temporarily add a step to the build pipeline to delete the prior deployment for each new deployment until you troubleshoot the exact cause of the corruption.
+
 ## Resolve integrity check failures
 
 When Blazor WebAssembly downloads an app's startup files, it instructs the browser to perform integrity checks on the responses. It uses information in the `blazor.boot.json` file to specify the expected SHA-256 hash values for `.dll`, `.wasm`, and other files. This is beneficial for the following reasons:
@@ -1574,7 +1622,7 @@ If you confirm that the server is returning plausibly correct data, there must b
 
 ### Troubleshoot integrity PowerShell script
 
-Use the [`integrity.ps1`](https://github.com/dotnet/AspNetCore.Docs/blob/main/aspnetcore/blazor/host-and-deploy/webassembly/_samples/integrity.ps1?raw=true) PowerShell script to validate a published and deployed Blazor app. The script is provided for PowerShell Core 6 as a starting point when the app has integrity issues that the Blazor framework can't identify. Customization of the script might be required for your apps, including if running on version of PowerShell later than version 6.2.7.
+Use the [`integrity.ps1`](https://github.com/dotnet/AspNetCore.Docs/blob/main/aspnetcore/blazor/host-and-deploy/webassembly/_samples/integrity.ps1?raw=true) PowerShell script to validate a published and deployed Blazor app. The script is provided for PowerShell Core 7 or later as a starting point when the app has integrity issues that the Blazor framework can't identify. Customization of the script might be required for your apps, including if running on version of PowerShell later than version 7.2.0.
 
 The script checks the files in the `publish` folder and downloaded from the deployed app to detect issues in the different manifests that contain integrity hashes. These checks should detect the most common problems:
 
@@ -1588,9 +1636,15 @@ Invoke the script with the following command in a PowerShell command shell:
 .\integrity.ps1 {BASE URL} {PUBLISH OUTPUT FOLDER}
 ```
 
+In the following example, the script is executed on a locally-running app at `https://localhost:5001/`:
+
+```powershell
+.\integrity.ps1 https://localhost:5001/ C:\TestApps\BlazorSample\bin\Release\net6.0\publish\
+```
+
 Placeholders:
 
-* `{BASE URL}`: The URL of the deployed app.
+* `{BASE URL}`: The URL of the deployed app. A trailing slash (`/`) is required.
 * `{PUBLISH OUTPUT FOLDER}`: The path to the app's `publish` folder or location where the app is published for deployment.
 
 > [!NOTE]
@@ -1604,8 +1658,8 @@ Placeholders:
 >
 > Comparing the checksum of a file to a valid checksum value doesn't guarantee file safety, but modifying a file in a way that maintains a checksum value isn't trivial for malicious users. Therefore, checksums are useful as a general security approach. Compare the checksum of the local `integrity.ps1` file to one of the following values:
 >
-> * SHA256: `6b0dc7aba5d8489136bb2969036432597615b11b4e432535e173ca077a0449c4`
-> * MD5: `f0c800a4c72604bd47f3c19f5f0bb4f4`
+> * SHA256: `32c24cb667d79a701135cb72f6bae490d81703323f61b8af2c7e5e5dc0f0c2bb`
+> * MD5: `9cee7d7ec86ee809a329b5406fbf21a8`
 >
 > Obtain the file's checksum on Windows OS with the following command. Provide the path and file name for the `{PATH AND FILE NAME}` placeholder and indicate the type of checksum to produce for the `{SHA512|MD5}` placeholder, either `SHA256` or `MD5`:
 >
@@ -1786,7 +1840,7 @@ In the following example:
 
 Use an existing hosted Blazor solution or create a new solution from the Blazor Hosted project template:
 
-* In the client app's project file, add a `<StaticWebAssetBasePath>` property to the `<PropertyGroup>` with a value of `FirstApp` to set the base path for the project's static assets:
+* In the client app's project file, add a [`<StaticWebAssetBasePath>` property](xref:blazor/fundamentals/static-files#static-web-asset-base-path) to the `<PropertyGroup>` with a value of `FirstApp` to set the base path for the project's static assets:
 
   ```xml
   <PropertyGroup>
@@ -1850,18 +1904,18 @@ Use an existing hosted Blazor solution or create a new solution from the Blazor 
 
 * In the server app's `Startup.Configure` method (`Startup.cs`), remove the following lines, which appear after the call to <xref:Microsoft.AspNetCore.Builder.HttpsPolicyBuilderExtensions.UseHttpsRedirection%2A>:
 
-  ```csharp
-  app.UseBlazorFrameworkFiles();
-  app.UseStaticFiles();
+  ```diff
+  -app.UseBlazorFrameworkFiles();
+  -app.UseStaticFiles();
 
-  app.UseRouting();
+  -app.UseRouting();
 
-  app.UseEndpoints(endpoints =>
-  {
-      endpoints.MapRazorPages();
-      endpoints.MapControllers();
-      endpoints.MapFallbackToFile("index.html");
-  });
+  -app.UseEndpoints(endpoints =>
+  -{
+  -    endpoints.MapRazorPages();
+  -    endpoints.MapControllers();
+  -    endpoints.MapFallbackToFile("index.html");
+  -});
   ```
 
   Add middleware that maps requests to the client apps. The following example configures the middleware to run when:
@@ -1925,6 +1979,15 @@ Use an existing hosted Blazor solution or create a new solution from the Blazor 
   });
   ```
 
+  For more information on <xref:Microsoft.AspNetCore.Builder.StaticFileExtensions.UseStaticFiles%2A>, see <xref:blazor/fundamentals/static-files#static-file-middleware>.
+
+  For more information on `UseBlazorFrameworkFiles` and `MapFallbackToFile`, see the following resources:
+
+  * <xref:Microsoft.AspNetCore.Builder.ComponentsWebAssemblyApplicationBuilderExtensions.UseBlazorFrameworkFiles%2A?displayProperty=fullName> ([reference source](https://github.com/dotnet/aspnetcore/blob/main/src/Components/WebAssembly/Server/src/ComponentsWebAssemblyApplicationBuilderExtensions.cs))
+  * <xref:Microsoft.AspNetCore.Builder.StaticFilesEndpointRouteBuilderExtensions.MapFallbackToFile%2A?displayProperty=fullName> ([reference source](https://github.com/dotnet/aspnetcore/blob/main/src/Middleware/StaticFiles/src/StaticFilesEndpointRouteBuilderExtensions.cs))
+
+  [!INCLUDE[](~/includes/aspnetcore-repo-ref-source-links.md)]
+
 * In the server app's weather forecast controller (`Controllers/WeatherForecastController.cs`), replace the existing route (`[Route("[controller]")]`) to `WeatherForecastController` with the following routes:
 
   ```csharp
@@ -1985,12 +2048,7 @@ Published assets are created in the `/bin/Release/{TARGET FRAMEWORK}/publish` fo
 
 When a Blazor project is published, a `web.config` file is created with the following IIS configuration:
 
-* MIME types are set for the following file extensions:
-  * `.dll`: `application/octet-stream`
-  * `.json`: `application/json`
-  * `.wasm`: `application/wasm`
-  * `.woff`: `application/font-woff`
-  * `.woff2`: `application/font-woff`
+* MIME types
 * HTTP compression is enabled for the following MIME types:
   * `application/octet-stream`
   * `application/wasm`
@@ -1998,15 +2056,20 @@ When a Blazor project is published, a `web.config` file is created with the foll
   * Serve the sub-directory where the app's static assets reside (`wwwroot/{PATH REQUESTED}`).
   * Create SPA fallback routing so that requests for non-file assets are redirected to the app's default document in its static assets folder (`wwwroot/index.html`).
   
-#### Use a custom web.config
+#### Use a custom `web.config`
 
-To use a custom `web.config` file, place the custom `web.config` file at the root of the project folder. Configure the project to publish IIS-specific assets using `PublishIISAssets` in the app's project file and publish the project:
+To use a custom `web.config` file:
 
-```xml
-<PropertyGroup>
-  <PublishIISAssets>true</PublishIISAssets>
-</PropertyGroup>
-```
+1. Place the custom `web.config` file in the project's root folder. For a hosted Blazor WebAssembly solution, place the file in the **`Server`** project's folder.
+1. Set the `<PublishIISAssets>` property to `true` in the project file (`.csproj`). For a hosted Blazor WebAssembly solution, set the property in the **`Server`** project's project file.
+
+   ```xml
+   <PropertyGroup>
+     <PublishIISAssets>true</PublishIISAssets>
+   </PropertyGroup>
+   ```
+
+1. Publish the project. For a hosted Blazor WebAssembly solution, publish the solution from the **`Server`** project. For more information, see <xref:blazor/host-and-deploy/index>.
 
 #### Install the URL Rewrite Module
 
@@ -2028,7 +2091,7 @@ If a standalone app is hosted as an IIS sub-app, perform either of the following
 
 * Disable the inherited ASP.NET Core Module handler.
 
-  Remove the handler in the Blazor app's published `web.config` file by adding a `<handlers>` section to the file:
+  Remove the handler in the Blazor app's published `web.config` file by adding a `<handlers>` section to the `<system.webServer>` section of the file:
 
   ```xml
   <handlers>
@@ -2051,6 +2114,9 @@ If a standalone app is hosted as an IIS sub-app, perform either of the following
     </location>
   </configuration>
   ```
+  
+  > [!NOTE]
+  > Disabling inheritance of the root (parent) app's `<system.webServer>` section is the default configuration for published apps using the .NET SDK.
 
 Removing the handler or disabling inheritance is performed in addition to [configuring the app's base path](xref:blazor/host-and-deploy/index#app-base-path). Set the app base path in the app's `index.html` file to the IIS alias used when configuring the sub-app in IIS.
 
@@ -2340,6 +2406,17 @@ In the project file, the script is run after publishing the app:
 > [!NOTE]
 > When renaming and lazy loading the same assemblies, see the guidance in <xref:blazor/webassembly-lazy-load-assemblies#onnavigateasync-events-and-renamed-assembly-files>.
 
+## Prior deployment corruption
+
+Typically on deployment:
+
+* Only the files that have changed are replaced, which usually results in a faster deployment.
+* Existing files that aren't part of the new deployment are left in place for use by the new deployment.
+
+In rare cases, lingering files from a prior deployment can corrupt a new deployment. Completely deleting the existing deployment (or locally-published app prior to deployment) may resolve the issue with a corrupted deployment. Often, deleting the existing deployment ***once*** is sufficient to resolve the problem, including for a DevOps build and deploy pipeline.
+
+If you determine that clearing a prior deployment is always required when a DevOps build and deploy pipeline is in use, you can temporarily add a step to the build pipeline to delete the prior deployment for each new deployment until you troubleshoot the exact cause of the corruption.
+
 ## Resolve integrity check failures
 
 When Blazor WebAssembly downloads an app's startup files, it instructs the browser to perform integrity checks on the responses. It uses information in the `blazor.boot.json` file to specify the expected SHA-256 hash values for `.dll`, `.wasm`, and other files. This is beneficial for the following reasons:
@@ -2381,7 +2458,7 @@ If you confirm that the server is returning plausibly correct data, there must b
 
 ### Troubleshoot integrity PowerShell script
 
-Use the [`integrity.ps1`](https://github.com/dotnet/AspNetCore.Docs/blob/main/aspnetcore/blazor/host-and-deploy/webassembly/_samples/integrity.ps1?raw=true) PowerShell script to validate a published and deployed Blazor app. The script is provided for PowerShell Core 6 as a starting point when the app has integrity issues that the Blazor framework can't identify. Customization of the script might be required for your apps, including if running on version of PowerShell later than version 6.2.7.
+Use the [`integrity.ps1`](https://github.com/dotnet/AspNetCore.Docs/blob/main/aspnetcore/blazor/host-and-deploy/webassembly/_samples/integrity.ps1?raw=true) PowerShell script to validate a published and deployed Blazor app. The script is provided for PowerShell Core 7 or later as a starting point when the app has integrity issues that the Blazor framework can't identify. Customization of the script might be required for your apps, including if running on version of PowerShell later than version 7.2.0.
 
 The script checks the files in the `publish` folder and downloaded from the deployed app to detect issues in the different manifests that contain integrity hashes. These checks should detect the most common problems:
 
@@ -2395,9 +2472,15 @@ Invoke the script with the following command in a PowerShell command shell:
 .\integrity.ps1 {BASE URL} {PUBLISH OUTPUT FOLDER}
 ```
 
+In the following example, the script is executed on a locally-running app at `https://localhost:5001/`:
+
+```powershell
+.\integrity.ps1 https://localhost:5001/ C:\TestApps\BlazorSample\bin\Release\net6.0\publish\
+```
+
 Placeholders:
 
-* `{BASE URL}`: The URL of the deployed app.
+* `{BASE URL}`: The URL of the deployed app. A trailing slash (`/`) is required.
 * `{PUBLISH OUTPUT FOLDER}`: The path to the app's `publish` folder or location where the app is published for deployment.
 
 > [!NOTE]
@@ -2411,8 +2494,8 @@ Placeholders:
 >
 > Comparing the checksum of a file to a valid checksum value doesn't guarantee file safety, but modifying a file in a way that maintains a checksum value isn't trivial for malicious users. Therefore, checksums are useful as a general security approach. Compare the checksum of the local `integrity.ps1` file to one of the following values:
 >
-> * SHA256: `6b0dc7aba5d8489136bb2969036432597615b11b4e432535e173ca077a0449c4`
-> * MD5: `f0c800a4c72604bd47f3c19f5f0bb4f4`
+> * SHA256: `32c24cb667d79a701135cb72f6bae490d81703323f61b8af2c7e5e5dc0f0c2bb`
+> * MD5: `9cee7d7ec86ee809a329b5406fbf21a8`
 >
 > Obtain the file's checksum on Windows OS with the following command. Provide the path and file name for the `{PATH AND FILE NAME}` placeholder and indicate the type of checksum to produce for the `{SHA512|MD5}` placeholder, either `SHA256` or `MD5`:
 >
